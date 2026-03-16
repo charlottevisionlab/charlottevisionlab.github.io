@@ -323,6 +323,52 @@ body::before {
   padding: 26px;
 }
 
+.profile-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.profile-head h3,
+.profile-head .feature-kicker,
+.profile-head .person-role {
+  margin-left: 0;
+}
+
+.avatar-circle {
+  flex: 0 0 84px;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  border: 2px solid rgba(4, 107, 85, 0.14);
+  background:
+    linear-gradient(135deg, rgba(4, 107, 85, 0.16), rgba(193, 122, 45, 0.18));
+  color: var(--accent-deep);
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.avatar-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-faculty {
+  width: 92px;
+  height: 92px;
+  flex-basis: 92px;
+  background:
+    linear-gradient(135deg, rgba(4, 107, 85, 0.2), rgba(11, 59, 49, 0.32));
+  color: #fdfdf8;
+}
+
 .feature-card h3,
 .faculty-card h3,
 .research-card h3,
@@ -497,6 +543,23 @@ code {
 
   .site-nav {
     display: none;
+  }
+
+  .profile-head {
+    align-items: flex-start;
+  }
+
+  .avatar-circle {
+    width: 74px;
+    height: 74px;
+    flex-basis: 74px;
+    font-size: 1.1rem;
+  }
+
+  .avatar-faculty {
+    width: 82px;
+    height: 82px;
+    flex-basis: 82px;
   }
 
   .hero h1,
