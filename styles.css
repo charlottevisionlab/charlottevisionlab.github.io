@@ -234,6 +234,79 @@ body::before {
   align-content: end;
 }
 
+.hero-figure {
+  margin: 0;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(180deg, rgba(253, 254, 250, 0.92), rgba(238, 244, 239, 0.92));
+  box-shadow: var(--shadow);
+}
+
+.flow-core,
+.flow-leaf {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.74);
+}
+
+.flow-core {
+  min-height: 88px;
+  padding: 18px;
+  font-family: "Instrument Serif", serif;
+  font-size: 2rem;
+  color: var(--accent-deep);
+}
+
+.flow-understanding {
+  background:
+    linear-gradient(135deg, rgba(4, 107, 85, 0.16), rgba(11, 59, 49, 0.12));
+}
+
+.flow-arrow,
+.flow-branches {
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  font-size: 1.7rem;
+  font-weight: 800;
+}
+
+.flow-arrow-down {
+  min-height: 38px;
+}
+
+.flow-branches {
+  grid-template-columns: repeat(2, 1fr);
+  min-height: 32px;
+}
+
+.flow-leaves {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.flow-leaf {
+  gap: 8px;
+  min-height: 132px;
+  padding: 16px;
+}
+
+.flow-leaf strong {
+  font-size: 1.1rem;
+}
+
+.flow-leaf span {
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
 .stat-card,
 .feature-card,
 .faculty-card,
@@ -250,6 +323,10 @@ body::before {
 
 .stat-card {
   padding: 24px;
+}
+
+.stat-card-note {
+  background: rgba(255, 255, 255, 0.56);
 }
 
 .stat-value {
@@ -504,7 +581,8 @@ code {
   .people-grid,
   .work-grid,
   .cta-band,
-  .sources-grid {
+  .sources-grid,
+  .flow-leaves {
     grid-template-columns: 1fr;
   }
 
