@@ -251,7 +251,8 @@ body::before {
   text-align: center;
   border: 1px solid var(--line);
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.74);
+  background:
+    linear-gradient(135deg, rgba(4, 107, 85, 0.1), rgba(255, 255, 255, 0.9));
 }
 
 .flow-core {
@@ -264,7 +265,7 @@ body::before {
 
 .flow-understanding {
   background:
-    linear-gradient(135deg, rgba(4, 107, 85, 0.16), rgba(11, 59, 49, 0.12));
+    linear-gradient(135deg, rgba(4, 107, 85, 0.24), rgba(11, 59, 49, 0.14));
 }
 
 .flow-arrow,
@@ -298,7 +299,10 @@ body::before {
 }
 
 .flow-leaf strong {
-  font-size: 1.1rem;
+  font-family: "Instrument Serif", serif;
+  font-size: 1.7rem;
+  font-weight: 400;
+  color: var(--accent-deep);
 }
 
 .flow-leaf span {
