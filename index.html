@@ -33,7 +33,8 @@
           <a href="#faculty">Faculty</a>
           <a href="#students">Students</a>
           <a href="#research">Research</a>
-          <a href="#publications">Highlights</a>
+          <a href="#publications">Publications</a>
+          <a href="#highlights">Highlights</a>
         </nav>
       </header>
 
@@ -382,6 +383,30 @@
         </section>
 
         <section class="section" id="publications">
+          <div class="section-heading">
+            <p class="eyebrow">Publications</p>
+            <h2>Live publication feed filtered from DBLP</h2>
+          </div>
+          <div class="publication-intro">
+            <p>
+              This list pulls publications from the DBLP profiles of Hieu Le
+              and Srijan Das, then filters them to CVPR, ICCV, ECCV, ICML,
+              NeurIPS, ICLR, AAAI, WACV, and the journals TPAMI, MeDIA, IJCV,
+              and TMLR from 2022 onward.
+            </p>
+            <div class="person-tags">
+              <span>Auto-loaded from DBLP</span>
+              <span>Arranged year-wise</span>
+              <span>Conference + journal filters</span>
+            </div>
+          </div>
+          <div id="publications-status" class="publications-status">
+            Loading publications from DBLP...
+          </div>
+          <div id="publications-list" class="publications-list" aria-live="polite"></div>
+        </section>
+
+        <section class="section" id="highlights">
           <div class="section-heading">
             <p class="eyebrow">Highlights</p>
             <h2>Selected publications and preprints reflected in the public pages</h2>
