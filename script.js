@@ -199,6 +199,20 @@ function columnMarkup(title, entries) {
   `;
 }
 
+function sequentialMarkup(bucket) {
+  const ordered = [...bucket.conference, ...bucket.journal];
+
+  if (!ordered.length) {
+    return '<p class="publication-empty">No matching papers for this year.</p>';
+  }
+
+  return `
+    <div class="publication-stack">
+      ${ordered.map(entryMarkup).join("")}
+    </div>
+  `;
+}
+
 function renderPublications(years) {
   if (!publicationsList || !publicationsStatus) {
     return;
@@ -221,10 +235,7 @@ function renderPublications(years) {
               ${bucket.conference.length + bucket.journal.length} papers
             </span>
           </div>
-          <div class="publication-year-grid">
-            ${columnMarkup("Conference Papers", bucket.conference)}
-            ${columnMarkup("Journal Articles", bucket.journal)}
-          </div>
+          ${sequentialMarkup(bucket)}
         </section>
       `,
     )
