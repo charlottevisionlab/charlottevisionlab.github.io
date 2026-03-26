@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Charlotte Vision Lab | Papers</title>
+    <meta
+      name="description"
+      content="Charlotte Vision Lab papers page with DBLP-powered publication feed and filters."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="site-header">
+        <a class="brand" href="./index.html#top" aria-label="Charlotte Vision Lab home">
+          <span class="brand-mark">
+            <img src="./images/logo.png" alt="Charlotte Vision Lab logo" />
+          </span>
+          <span class="brand-copy">
+            <strong>Charlotte Vision Lab</strong>
+            <span>UNC Charlotte</span>
+          </span>
+        </a>
+        <nav class="site-nav" aria-label="Primary">
+          <a href="./index.html#about">About</a>
+          <a href="./index.html#faculty">Faculty</a>
+          <a href="./index.html#students">Students</a>
+          <details class="nav-dropdown">
+            <summary>Research</summary>
+            <div class="nav-dropdown-menu" role="menu" aria-label="Research links">
+              <a href="./index.html#highlights">Highlights</a>
+              <a href="./papers.html" role="menuitem">Publications</a>
+            </div>
+          </details>
+        </nav>
+      </header>
+
+      <main id="top">
+        <section class="section" id="papers">
+          <div class="section-heading">
+            <p class="eyebrow">Research</p>
+            <h2>Papers</h2>
+          </div>
+
+          <div class="papers-filter-shell" aria-label="Filter papers">
+            <h3 class="papers-filter-title">Filter papers</h3>
+
+            <div class="papers-filter-grid">
+              <label class="papers-filter-field">
+                <span class="papers-filter-label">Search</span>
+                <input id="publications-search" type="search" autocomplete="off" />
+              </label>
+
+              <label class="papers-filter-field">
+                <span class="papers-filter-label">Research field</span>
+                <select id="papers-tag">
+                  <option value="">Any</option>
+                </select>
+              </label>
+
+              <label class="papers-filter-field">
+                <span class="papers-filter-label">Year</span>
+                <select id="papers-year">
+                  <option value="">Any</option>
+                </select>
+              </label>
+
+              <label class="papers-filter-field">
+                <span class="papers-filter-label">Type</span>
+                <select id="papers-type">
+                  <option value="all">Any</option>
+                  <option value="conference">Conference</option>
+                  <option value="journal">Journal</option>
+                </select>
+              </label>
+
+              <label class="papers-filter-field">
+                <span class="papers-filter-label">Venue</span>
+                <select id="papers-venue">
+                  <option value="">Any</option>
+                </select>
+              </label>
+
+              <div class="papers-filter-field papers-filter-field-actions">
+                <button class="papers-filter-reset" id="papers-reset" type="button">
+                  Reset
+                </button>
+                <div class="papers-filter-count">
+                  <span id="publications-count" class="publication-chip">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="publications-status" class="publications-status">
+            Loading publications from DBLP...
+          </div>
+          <div id="publications-list" class="publications-list" aria-live="polite"></div>
+
+          <nav class="papers-pager" aria-label="Papers pagination">
+            <button id="papers-prev" class="papers-pager-button" type="button">
+              Previous
+            </button>
+            <div id="papers-pageinfo" class="papers-pager-info">—</div>
+            <button id="papers-next" class="papers-pager-button" type="button">
+              Next
+            </button>
+          </nav>
+        </section>
+      </main>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
+

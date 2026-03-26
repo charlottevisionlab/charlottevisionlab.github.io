@@ -32,9 +32,13 @@
           <a href="#about">About</a>
           <a href="#faculty">Faculty</a>
           <a href="#students">Students</a>
-          <a href="#research">Research</a>
-          <a href="#publications">Publications</a>
-          <a href="#highlights">Highlights</a>
+          <details class="nav-dropdown">
+            <summary>Research</summary>
+            <div class="nav-dropdown-menu" role="menu" aria-label="Research links">
+              <a href="#highlights">Highlights</a>
+              <a href="./papers.html" role="menuitem">Publications</a>
+            </div>
+          </details>
         </nav>
       </header>
 
@@ -254,20 +258,17 @@
                 </div>
               </div>
               <p>
-                Public records connected to Srijan Das’s CV and OpenReview list
-                Manish as a Ph.D. student at UNC Charlotte working on vision,
-                multimodality, and robot learning. His listed thesis topic is
-                vision-language models for robot learning.
+                Manish is a Ph.D student in Computer Science at UNC Charlotte, working on robot learning and multimodal AI. His research explores vision-language-action models for perception, manipulation, and navigation in embodied systems.
               </p>
               <div class="person-tags">
                 <span>Robot learning</span>
-                <span>Computer vision</span>
                 <span>Multimodality</span>
+                <span>Computer vision</span>
               </div>
               <div class="source-links">
-                <a href="https://openreview.net/profile?id=~Manish_Kumar_Govind3">OpenReview profile</a>
-                <a href="https://srijandas07.github.io/data/Srijan_CV.pdf">Advisor CV</a>
-                <a href="https://dblp.org/rec/journals/corr/abs-2501-05711">DBLP publication record</a>
+                <a href="https://manishgovind.github.io/">Website</a>
+                <a href="https://scholar.google.com/citations?user=SUdIhhUAAAAJ">Google Scholar</a>
+                <a href="https://github.com/ManishGovind">GitHub</a>
               </div>
             </article>
 
@@ -382,29 +383,23 @@
           </div>
         </section>
 
-        <section class="section" id="publications">
+        <!-- <section class="section" id="publications">
           <div class="section-heading">
-            <p class="eyebrow">Publications</p>
-            <h2>Live publication feed filtered from DBLP</h2>
+            <h2>Publications</h2>
           </div>
           <div class="publication-intro">
             <p>
-              This list pulls publications from the DBLP profiles of Hieu Le
-              and Srijan Das, then filters them to CVPR, ICCV, ECCV, ICML,
-              NeurIPS, ICLR, AAAI, WACV, and the journals TPAMI, MeDIA, IJCV,
-              and TMLR from 2022 onward.
+              Browse the full, filterable papers list on the dedicated page.
             </p>
-            <div class="person-tags">
-              <span>Auto-loaded from DBLP</span>
-              <span>Arranged year-wise</span>
-              <span>Conference + journal filters</span>
+            <div class="hero-actions">
+              <a class="button button-primary" href="./papers.html">Open papers page</a>
             </div>
           </div>
           <div id="publications-status" class="publications-status">
             Loading publications from DBLP...
           </div>
           <div id="publications-list" class="publications-list" aria-live="polite"></div>
-        </section>
+        </section> -->
 
         <section class="section" id="highlights">
           <div class="section-heading">
@@ -467,7 +462,7 @@
           </div>
         </section>
 
-        <section class="section cta-band">
+        <!-- <section class="section cta-band">
           <div>
             <p class="eyebrow">GitHub Pages Ready</p>
             <h2>Designed to publish from <code>charlottevisionlab.github.io</code></h2>
@@ -478,7 +473,7 @@
             pipeline.
           </p>
           <a class="button button-primary" href="#top">Back to top</a>
-        </section>
+        </section> -->
       </main>
     </div>
 

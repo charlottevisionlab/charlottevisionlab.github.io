@@ -1,6 +1,19 @@
 const buildDate = document.querySelector("#build-date");
 const publicationsList = document.querySelector("#publications-list");
 const publicationsStatus = document.querySelector("#publications-status");
+const publicationsSearch = document.querySelector("#publications-search");
+const publicationsCount = document.querySelector("#publications-count");
+const publicationsTypeButtons = Array.from(
+  document.querySelectorAll("[data-publications-type]"),
+);
+const papersYearSelect = document.querySelector("#papers-year");
+const papersTypeSelect = document.querySelector("#papers-type");
+const papersVenueSelect = document.querySelector("#papers-venue");
+const papersTagSelect = document.querySelector("#papers-tag");
+const papersResetButton = document.querySelector("#papers-reset");
+const papersPrevButton = document.querySelector("#papers-prev");
+const papersNextButton = document.querySelector("#papers-next");
+const papersPageInfo = document.querySelector("#papers-pageinfo");
 
 const DBLP_FEEDS = [
   {
@@ -14,6 +27,26 @@ const DBLP_FEEDS = [
 ];
 
 const MIN_PUBLICATION_YEAR = 2022;
+const PAPERS_PAGE_SIZE = 10;
+
+let allPublications = [];
+let publicationsState = {
+  query: "",
+  type: "all", // all | conference | journal
+  year: "", // "" means any
+  venueLabel: "", // "" means any
+  tag: "", // "" means any
+  page: 0, // 0-indexed
+};
+
+const TAG_RULES = [
+  { tag: "Vision-Language", test: /vision[-\s]?language|vlm|multimodal|language vision/i },
+  { tag: "Video Understanding", test: /video|egocentric|action|activity|temporal/i },
+  { tag: "Robotics", test: /robot|robotic|manipulation|policy|embodied|navigation/i },
+  { tag: "3D / Geometry", test: /\b3d\b|geometry|reconstruction|pose|point cloud|mesh|depth/i },
+  { tag: "Generative", test: /diffusion|generative|synthesis|gan\b|text-to-image|image generation/i },
+  { tag: "Reliable / Uncertainty", test: /uncertainty|robust|reliab|calibration|explain|interpretab/i },
+];
 
 const VENUE_RULES = {
   conference: [
@@ -44,6 +77,134 @@ if (buildDate) {
 
 function normalizeText(value) {
   return (value || "").replace(/\s+/g, " ").trim();
+}
+
+function filteredPublications(entries, state) {
+  const query = normalizeText(state.query).toLowerCase();
+  const type = state.type;
+  const year = state.year;
+  const venueLabel = state.venueLabel;
+  const tag = state.tag;
+
+  return entries.filter((entry) => {
+    if (type !== "all" && entry.venueType !== type) {
+      return false;
+    }
+
+    if (year && String(entry.year) !== String(year)) {
+      return false;
+    }
+
+    if (venueLabel && entry.venueLabel !== venueLabel) {
+      return false;
+    }
+
+    if (tag && !(entry.tags || []).includes(tag)) {
+      return false;
+    }
+
+    if (!query) {
+      return true;
+    }
+
+    const haystack = [
+      entry.title,
+      entry.venue,
+      entry.venueLabel,
+      entry.sourceName,
+      ...(entry.authors || []),
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    return haystack.includes(query);
+  });
+}
+
+function updatePublicationsCount(count) {
+  if (!publicationsCount) return;
+  publicationsCount.textContent = `${count} result${count === 1 ? "" : "s"}`;
+}
+
+function updatePager(totalCount) {
+  if (!papersPageInfo || !papersPrevButton || !papersNextButton) {
+    return;
+  }
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAPERS_PAGE_SIZE));
+  const page = Math.min(Math.max(0, publicationsState.page), totalPages - 1);
+
+  const start = totalCount === 0 ? 0 : page * PAPERS_PAGE_SIZE + 1;
+  const end = Math.min(totalCount, (page + 1) * PAPERS_PAGE_SIZE);
+
+  papersPageInfo.textContent =
+    totalCount === 0
+      ? "No results"
+      : `Showing ${start}-${end} of ${totalCount}`;
+
+  papersPrevButton.disabled = page <= 0;
+  papersNextButton.disabled = page >= totalPages - 1;
+}
+
+function applyPagination(entries) {
+  if (!papersPageInfo || !papersPrevButton || !papersNextButton) {
+    return entries;
+  }
+
+  const totalPages = Math.max(1, Math.ceil(entries.length / PAPERS_PAGE_SIZE));
+  const page = Math.min(Math.max(0, publicationsState.page), totalPages - 1);
+  const startIdx = page * PAPERS_PAGE_SIZE;
+  return entries.slice(startIdx, startIdx + PAPERS_PAGE_SIZE);
+}
+
+function uniqueSorted(values, compare) {
+  return Array.from(new Set(values)).sort(compare);
+}
+
+function inferTags(entry) {
+  const haystack = `${entry.title || ""} ${entry.venue || ""}`.toLowerCase();
+  const tags = TAG_RULES.filter((rule) => rule.test.test(haystack)).map(
+    (rule) => rule.tag,
+  );
+  return tags.length ? tags : ["Other"];
+}
+
+function syncPapersSelectOptions(entries) {
+  if (papersYearSelect) {
+    const years = uniqueSorted(
+      entries.map((e) => e.year).filter(Boolean),
+      (a, b) => b - a,
+    );
+    const selected = papersYearSelect.value;
+    papersYearSelect.innerHTML =
+      `<option value="">Any</option>` +
+      years.map((y) => `<option value="${y}">${y}</option>`).join("");
+    papersYearSelect.value = selected;
+  }
+
+  if (papersVenueSelect) {
+    const venues = uniqueSorted(
+      entries.map((e) => e.venueLabel).filter(Boolean),
+      (a, b) => a.localeCompare(b),
+    );
+    const selected = papersVenueSelect.value;
+    papersVenueSelect.innerHTML =
+      `<option value="">Any</option>` +
+      venues.map((v) => `<option value="${v}">${v}</option>`).join("");
+    papersVenueSelect.value = selected;
+  }
+
+  if (papersTagSelect) {
+    const tags = uniqueSorted(
+      entries.flatMap((e) => e.tags || []),
+      (a, b) => a.localeCompare(b),
+    );
+    const selected = papersTagSelect.value;
+    papersTagSelect.innerHTML =
+      `<option value="">Any</option>` +
+      tags.map((t) => `<option value="${t}">${t}</option>`).join("");
+    papersTagSelect.value = selected;
+  }
 }
 
 function parseAuthors(node) {
@@ -96,7 +257,7 @@ function parseRecord(node, sourceName) {
     return null;
   }
 
-  return {
+  const entry = {
     authors: parseAuthors(node),
     link: recordLink(node),
     sourceName,
@@ -106,6 +267,9 @@ function parseRecord(node, sourceName) {
     venueType: classification.type,
     year,
   };
+
+  entry.tags = inferTags(entry);
+  return entry;
 }
 
 function sortEntries(entries) {
@@ -219,8 +383,9 @@ function renderPublications(years) {
   }
 
   if (!years.length) {
-    publicationsStatus.textContent =
-      "No publications matched the selected DBLP venue filters.";
+    publicationsStatus.textContent = "No publications match the current filters.";
+    publicationsStatus.hidden = false;
+    publicationsList.innerHTML = "";
     return;
   }
 
@@ -240,6 +405,24 @@ function renderPublications(years) {
       `,
     )
     .join("");
+}
+
+function setActiveType(type) {
+  publicationsState = { ...publicationsState, type };
+  for (const button of publicationsTypeButtons) {
+    const isActive = button.dataset.publicationsType === type;
+    button.classList.toggle("is-active", isActive);
+  }
+  rerenderPublications();
+}
+
+function rerenderPublications() {
+  const filtered = filteredPublications(allPublications, publicationsState);
+  const ordered = sortEntries([...filtered]);
+  updatePublicationsCount(ordered.length);
+  updatePager(ordered.length);
+  const paged = applyPagination(ordered);
+  renderPublications(groupByYear(paged));
 }
 
 async function loadPublications() {
@@ -267,11 +450,107 @@ async function loadPublications() {
         .filter(Boolean),
     );
 
-    renderPublications(groupByYear(dedupeEntries(entries)));
+    allPublications = dedupeEntries(entries);
+    syncPapersSelectOptions(allPublications);
+    rerenderPublications();
   } catch (error) {
     publicationsStatus.textContent =
       "Could not load the live DBLP feed in this browser session. You can still browse the featured highlights below.";
   }
+}
+
+if (publicationsSearch) {
+  publicationsSearch.addEventListener("input", (event) => {
+    publicationsState = {
+      ...publicationsState,
+      query: event.target.value,
+      page: 0,
+    };
+    rerenderPublications();
+  });
+}
+
+for (const button of publicationsTypeButtons) {
+  button.addEventListener("click", () => {
+    setActiveType(button.dataset.publicationsType || "all");
+  });
+}
+
+if (papersTypeSelect) {
+  papersTypeSelect.addEventListener("change", () => {
+    publicationsState = {
+      ...publicationsState,
+      type: papersTypeSelect.value || "all",
+      page: 0,
+    };
+    rerenderPublications();
+  });
+}
+
+if (papersYearSelect) {
+  papersYearSelect.addEventListener("change", () => {
+    publicationsState = {
+      ...publicationsState,
+      year: papersYearSelect.value || "",
+      page: 0,
+    };
+    rerenderPublications();
+  });
+}
+
+if (papersVenueSelect) {
+  papersVenueSelect.addEventListener("change", () => {
+    publicationsState = {
+      ...publicationsState,
+      venueLabel: papersVenueSelect.value || "",
+      page: 0,
+    };
+    rerenderPublications();
+  });
+}
+
+if (papersTagSelect) {
+  papersTagSelect.addEventListener("change", () => {
+    publicationsState = { ...publicationsState, tag: papersTagSelect.value || "", page: 0 };
+    rerenderPublications();
+  });
+}
+
+if (papersPrevButton) {
+  papersPrevButton.addEventListener("click", () => {
+    publicationsState = { ...publicationsState, page: Math.max(0, publicationsState.page - 1) };
+    rerenderPublications();
+  });
+}
+
+if (papersNextButton) {
+  papersNextButton.addEventListener("click", () => {
+    publicationsState = { ...publicationsState, page: publicationsState.page + 1 };
+    rerenderPublications();
+  });
+}
+
+if (papersResetButton) {
+  papersResetButton.addEventListener("click", () => {
+    publicationsState = {
+      query: "",
+      type: "all",
+      year: "",
+      venueLabel: "",
+      tag: "",
+      page: 0,
+    };
+    if (publicationsSearch) publicationsSearch.value = "";
+    if (papersTypeSelect) papersTypeSelect.value = "all";
+    if (papersYearSelect) papersYearSelect.value = "";
+    if (papersVenueSelect) papersVenueSelect.value = "";
+    if (papersTagSelect) papersTagSelect.value = "";
+    for (const button of publicationsTypeButtons) {
+      const isActive = button.dataset.publicationsType === "all";
+      button.classList.toggle("is-active", isActive);
+    }
+    rerenderPublications();
+  });
 }
 
 loadPublications();
