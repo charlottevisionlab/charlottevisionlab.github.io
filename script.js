@@ -32,11 +32,11 @@ const PAPERS_PAGE_SIZE = 10;
 let allPublications = [];
 let publicationsState = {
   query: "",
-  type: "all", // all | conference | journal
-  year: "", // "" means any
-  venueLabel: "", // "" means any
-  tag: "", // "" means any
-  page: 0, // 0-indexed
+  type: "all",
+  year: "",
+  venueLabel: "",
+  tag: "",
+  page: 0,
 };
 
 const TAG_RULES = [
@@ -64,6 +64,9 @@ const VENUE_RULES = {
     { label: "MeDIA", test: /Medical Image Anal\.|MeDIA/i },
     { label: "IJCV", test: /Int\. J\. Comput\. Vis\.|IJCV/i },
     { label: "TMLR", test: /Trans\. Mach\. Learn\. Res\.|TMLR/i },
+  ],
+  preprint: [
+    { label: "arXiv", test: /CoRR|arXiv/i },
   ],
 };
 
@@ -209,7 +212,7 @@ function syncPapersSelectOptions(entries) {
 
 function parseAuthors(node) {
   return Array.from(node.querySelectorAll("author"))
-    .map((author) => normalizeText(author.textContent))
+    .map((author) => normalizeText(author.textContent).replace(/\s+\d+$/, ""))
     .filter(Boolean);
 }
 
@@ -244,13 +247,32 @@ function classifyVenue(venue) {
     }
   }
 
-  return null;
+  for (const rule of VENUE_RULES.preprint) {
+    if (rule.test.test(venue)) {
+      return { type: "preprint", label: rule.label };
+    }
+  }
+
+  return { type: "conference", label: "Other" };
 }
 
 function parseRecord(node, sourceName) {
-  const title = firstText(node, "title");
+  let title = firstText(node, "title");
+  
+  if (title.endsWith(".")) {
+    title = title.slice(0, -1);
+  }
+  
   const year = Number.parseInt(firstText(node, "year"), 10);
-  const venue = firstText(node, "booktitle") || firstText(node, "journal");
+  
+  let venue = firstText(node, "booktitle") || firstText(node, "journal");
+  if (venue) {
+    venue = venue.replace(/\s*\(\d+\)$/, "");
+  }
+  if (venue && venue.includes("CoRR")) {
+    venue = "arXiv Preprint";
+  }
+  
   const classification = classifyVenue(venue);
 
   if (!title || !year || year < MIN_PUBLICATION_YEAR || !classification) {
@@ -295,7 +317,7 @@ function groupByYear(entries) {
 
   for (const entry of entries) {
     if (!grouped.has(entry.year)) {
-      grouped.set(entry.year, { conference: [], journal: [] });
+      grouped.set(entry.year, { conference: [], journal: [], preprint: [] });
     }
 
     grouped.get(entry.year)[entry.venueType].push(entry);
@@ -307,6 +329,7 @@ function groupByYear(entries) {
       year,
       conference: sortEntries(bucket.conference),
       journal: sortEntries(bucket.journal),
+      preprint: sortEntries(bucket.preprint),
     }));
 }
 
@@ -327,7 +350,7 @@ function dedupeEntries(entries) {
 function entryMarkup(entry) {
   const authors = entry.authors.join(", ");
   const title = entry.link
-    ? `<a class="text-link" href="${entry.link}">${entry.title}</a>`
+    ? `<a class="text-link" href="${entry.link}" target="_blank">${entry.title}</a>`
     : entry.title;
 
   return `
@@ -339,6 +362,12 @@ function entryMarkup(entry) {
       <h5>${title}</h5>
       <p>${authors}</p>
       <p>${entry.venue}</p>
+      <div class="abstract-container" style="margin-top: 12px;">
+        <button class="fetch-abstract-btn" data-title="${encodeURIComponent(entry.title)}" style="background: none; border: none; color: var(--accent); cursor: pointer; font-weight: 700; padding: 0; text-decoration: underline;">
+          Read Abstract ↓
+        </button>
+        <p class="abstract-text" style="display: none; margin-top: 10px; font-size: 0.9rem; color: var(--muted); line-height: 1.6;"></p>
+      </div>
     </article>
   `;
 }
@@ -364,7 +393,7 @@ function columnMarkup(title, entries) {
 }
 
 function sequentialMarkup(bucket) {
-  const ordered = [...bucket.conference, ...bucket.journal];
+  const ordered = [...bucket.conference, ...bucket.journal, ...bucket.preprint];
 
   if (!ordered.length) {
     return '<p class="publication-empty">No matching papers for this year.</p>';
@@ -377,7 +406,7 @@ function sequentialMarkup(bucket) {
   `;
 }
 
-function renderPublications(years) {
+function renderPublications(years, yearTotals = {}) {
   if (!publicationsList || !publicationsStatus) {
     return;
   }
@@ -391,19 +420,21 @@ function renderPublications(years) {
 
   publicationsStatus.hidden = true;
   publicationsList.innerHTML = years
-    .map(
-      (bucket) => `
+    .map((bucket) => {
+      const totalForYear = yearTotals[bucket.year] || 
+        (bucket.conference.length + bucket.journal.length + (bucket.preprint ? bucket.preprint.length : 0));
+      return `
         <section class="publication-year">
           <div class="publication-year-head">
             <h3>${bucket.year}</h3>
             <span class="publication-chip">
-              ${bucket.conference.length + bucket.journal.length} papers
+              ${totalForYear} paper${totalForYear === 1 ? "" : "s"}
             </span>
           </div>
           ${sequentialMarkup(bucket)}
         </section>
-      `,
-    )
+      `;
+    })
     .join("");
 }
 
@@ -421,8 +452,12 @@ function rerenderPublications() {
   const ordered = sortEntries([...filtered]);
   updatePublicationsCount(ordered.length);
   updatePager(ordered.length);
+  const yearTotals = {};
+  for (const entry of ordered) {
+    yearTotals[entry.year] = (yearTotals[entry.year] || 0) + 1;
+  }
   const paged = applyPagination(ordered);
-  renderPublications(groupByYear(paged));
+  renderPublications(groupByYear(paged), yearTotals);
 }
 
 async function loadPublications() {
@@ -550,6 +585,70 @@ if (papersResetButton) {
       button.classList.toggle("is-active", isActive);
     }
     rerenderPublications();
+  });
+}
+
+if (publicationsList) {
+  publicationsList.addEventListener("click", async (event) => {
+    if (event.target.classList.contains("fetch-abstract-btn")) {
+      const btn = event.target;
+      const container = btn.nextElementSibling;
+      
+      if (container.style.display === "block") {
+        container.style.display = "none";
+        btn.textContent = "Read Abstract ↓";
+        return;
+      }
+
+      if (!container.textContent || container.textContent.includes("Failed") || container.textContent.includes("not available")) {
+        btn.textContent = "Loading...";
+        try {
+          const rawTitle = decodeURIComponent(btn.getAttribute("data-title"));
+          
+          const cleanTitle = rawTitle.replace(/[^a-zA-Z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+          
+          const url = `https://api.openalex.org/works?filter=title.search:${encodeURIComponent(cleanTitle)}&select=abstract_inverted_index`;
+          
+          const response = await fetch(url);
+          
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          if (data.results && data.results.length > 0 && data.results[0].abstract_inverted_index) {
+            const inverted = data.results[0].abstract_inverted_index;
+            const words = [];
+            
+            for (const [word, positions] of Object.entries(inverted)) {
+              for (const pos of positions) {
+                words[pos] = word;
+              }
+            }
+            
+            let abstractText = words.join(" ");
+            
+            abstractText = abstractText.replace(/\\textbf{([^}]+)}/g, "<strong>$1</strong>");
+            abstractText = abstractText.replace(/\\emph{([^}]+)}/g, "<em>$1</em>");
+            abstractText = abstractText.replace(/\\textit{([^}]+)}/g, "<em>$1</em>");
+            
+            container.innerHTML = abstractText;
+            
+            if (window.MathJax) {
+              MathJax.typesetPromise([container]);
+            }
+          } else {
+            container.textContent = "Abstract not available in the open database.";
+          }
+        } catch (err) {
+          container.textContent = `Failed to load abstract. Please try again later.`;
+        }
+      }
+
+      container.style.display = "block";
+      btn.textContent = "Hide Abstract ↑";
+    }
   });
 }
 

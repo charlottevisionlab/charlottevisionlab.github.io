@@ -15,6 +15,12 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
+    <script>
+      window.MathJax = {
+        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   </head>
   <body>
     <div class="page-shell">
@@ -78,6 +84,7 @@
                   <option value="all">Any</option>
                   <option value="conference">Conference</option>
                   <option value="journal">Journal</option>
+                  <option value="preprint">Preprint</option>
                 </select>
               </label>
 
@@ -120,4 +127,3 @@
     <script src="./script.js"></script>
   </body>
 </html>
-
