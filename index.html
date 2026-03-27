@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Sora:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
@@ -45,7 +45,14 @@
       <main id="top">
         <section class="hero">
           <div class="hero-copy">
-            <p class="eyebrow">Computer Vision at UNC Charlotte</p>
+            <div class="hero-head">
+              <p class="eyebrow">Computer Vision at UNC Charlotte</p>
+              <div class="hero-badges" aria-label="Research focus areas">
+                <span class="data-pill">Reliable Perception</span>
+                <span class="data-pill">Vision-Language Systems</span>
+                <span class="data-pill">Embodied AI</span>
+              </div>
+            </div>
             <h1>Vision systems that understand people, scenes, and motion.</h1>
             <p class="lead">
               Charlotte Vision Lab is a research-facing website concept for a
@@ -58,35 +65,75 @@
               <a class="button button-primary" href="#faculty">Meet the team</a>
               <a class="button button-secondary" href="#research">Explore research</a>
             </div>
+            <div class="hero-metrics" aria-label="Lab snapshot metrics">
+              <article class="metric-card">
+                <span class="metric-value">2</span>
+                <span class="metric-label">Faculty Leads</span>
+              </article>
+              <article class="metric-card">
+                <span class="metric-value">6</span>
+                <span class="metric-label">Current Students</span>
+              </article>
+              <article class="metric-card">
+                <span class="metric-value">3</span>
+                <span class="metric-label">Core Research Tracks</span>
+              </article>
+            </div>
           </div>
 
           <aside class="hero-panel" aria-label="Lab snapshot">
+
             <figure class="hero-figure">
-              <div class="flow-core">Perception</div>
-              <div class="flow-arrow flow-arrow-down" aria-hidden="true">↓</div>
-              <div class="flow-core flow-understanding">Understanding</div>
-              <div class="flow-branches" aria-hidden="true">
-                <span class="flow-arrow">↙</span>
-                <span class="flow-arrow">↘</span>
+              <div class="flow-stage">
+                <span class="flow-stage-index">01</span>
+                <div class="flow-core">
+                  <strong>Perception</strong>
+                  <span>Detection, segmentation, geometry, and uncertainty-aware sensing.</span>
+                </div>
+              </div>
+              <div class="flow-link" aria-hidden="true"></div>
+              <div class="flow-stage">
+                <span class="flow-stage-index">02</span>
+                <div class="flow-core flow-understanding">
+                  <strong>Understanding</strong>
+                  <span>Video reasoning, multimodal learning, and structured scene interpretation.</span>
+                </div>
               </div>
               <div class="flow-leaves">
-                <div class="flow-core flow-leaf">
+                <div class="flow-leaf">
                   <strong>Generation</strong>
                   <span>3D-aware synthesis and controllable models</span>
                 </div>
-                <div class="flow-core flow-leaf">
+                <div class="flow-leaf">
                   <strong>Action</strong>
                   <span>Robot learning, VLA systems, and embodied control</span>
                 </div>
               </div>
             </figure>
+            <div class="hero-note-grid">
+              <article class="hero-note">
+                <span class="hero-note-label">Research mode</span>
+                <p>Crossing video, robotics, 3D reasoning, and generative modeling without losing scientific clarity.</p>
+              </article>
+              <article class="hero-note">
+                <span class="hero-note-label">Design intent</span>
+                <p>A sharper, more contemporary lab presence for faculty, students, collaborators, and publications.</p>
+              </article>
+            </div>
           </aside>
         </section>
 
         <section class="section intro-grid" id="about">
           <div class="section-heading">
-            <p class="eyebrow">About</p>
-            <h2>A shared vision for reliable, multimodal perception.</h2>
+            <div>
+              <p class="eyebrow">About</p>
+              <h2>A shared vision for reliable, multimodal perception.</h2>
+            </div>
+            <p class="section-intro">
+              The site keeps the lab’s current structure, but presents it with
+              clearer hierarchy, softer geometry, and a more polished
+              research-institution visual language.
+            </p>
           </div>
           <div class="feature-grid">
             <article class="feature-card">
@@ -116,8 +163,15 @@
 
         <section class="section" id="faculty">
           <div class="section-heading">
-            <p class="eyebrow">Faculty</p>
-            <h2>Faculty leading the lab</h2>
+            <div>
+              <p class="eyebrow">Faculty</p>
+              <h2>Faculty leading the lab</h2>
+            </div>
+            <p class="section-intro">
+              The faculty profiles establish the lab’s complementary strengths
+              in reliable vision, multimodal reasoning, video understanding,
+              and robotic perception.
+            </p>
           </div>
           <div class="faculty-grid">
             <article class="faculty-card">
@@ -187,8 +241,15 @@
 
         <section class="section" id="students">
           <div class="section-heading">
-            <p class="eyebrow">Students</p>
-            <h2>Current student roster</h2>
+            <div>
+              <p class="eyebrow">Students</p>
+              <h2>Current student roster</h2>
+            </div>
+            <p class="section-intro">
+              Current members extend the lab’s work across long-video
+              understanding, robot learning, multimodal AI, and generative
+              vision.
+            </p>
           </div>
           <div class="people-grid">
             <article class="person-card">
@@ -347,8 +408,15 @@
 
         <section class="section" id="research">
           <div class="section-heading">
-            <p class="eyebrow">Research</p>
-            <h2>Three research directions that connect the group</h2>
+            <div>
+              <p class="eyebrow">Research</p>
+              <h2>Three research directions that connect the group</h2>
+            </div>
+            <p class="section-intro">
+              These themes tie together faculty agendas, student projects, and
+              recent publication signals visible across the group’s public
+              profiles.
+            </p>
           </div>
           <div class="research-grid">
             <article class="research-card">
@@ -403,8 +471,15 @@
 
         <section class="section" id="highlights">
           <div class="section-heading">
-            <p class="eyebrow">Highlights</p>
-            <h2>Selected publications and preprints reflected in the public pages</h2>
+            <div>
+              <p class="eyebrow">Highlights</p>
+              <h2>Selected publications and preprints reflected in the public pages</h2>
+            </div>
+            <p class="section-intro">
+              A compact set of papers and preprints that signals the lab’s
+              current output across video understanding, multimodal learning,
+              robot learning, and controllable generation.
+            </p>
           </div>
           <div class="work-grid">
             <article class="work-card work-card-featured">

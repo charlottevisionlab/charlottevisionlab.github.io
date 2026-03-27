@@ -2,6 +2,7 @@ const buildDate = document.querySelector("#build-date");
 const publicationsList = document.querySelector("#publications-list");
 const publicationsStatus = document.querySelector("#publications-status");
 const publicationsSearch = document.querySelector("#publications-search");
+const siteHeader = document.querySelector(".site-header");
 const publicationsCount = document.querySelector("#publications-count");
 const publicationsTypeButtons = Array.from(
   document.querySelectorAll("[data-publications-type]"),
@@ -47,6 +48,8 @@ const TAG_RULES = [
   { tag: "Generative", test: /diffusion|generative|synthesis|gan\b|text-to-image|image generation/i },
   { tag: "Reliable / Uncertainty", test: /uncertainty|robust|reliab|calibration|explain|interpretab/i },
 ];
+
+let revealObserver = null;
 
 const VENUE_RULES = {
   conference: [
@@ -350,7 +353,7 @@ function dedupeEntries(entries) {
 function entryMarkup(entry) {
   const authors = entry.authors.join(", ");
   const title = entry.link
-    ? `<a class="text-link" href="${entry.link}" target="_blank">${entry.title}</a>`
+    ? `<a class="text-link" href="${entry.link}" target="_blank" rel="noreferrer noopener">${entry.title}</a>`
     : entry.title;
 
   return `
@@ -362,11 +365,16 @@ function entryMarkup(entry) {
       <h5>${title}</h5>
       <p>${authors}</p>
       <p>${entry.venue}</p>
-      <div class="abstract-container" style="margin-top: 12px;">
-        <button class="fetch-abstract-btn" data-title="${encodeURIComponent(entry.title)}" style="background: none; border: none; color: var(--accent); cursor: pointer; font-weight: 700; padding: 0; text-decoration: underline;">
-          Read Abstract ↓
+      <div class="publication-abstract">
+        <button
+          class="fetch-abstract-btn publication-abstract-toggle"
+          type="button"
+          aria-expanded="false"
+          data-title="${encodeURIComponent(entry.title)}"
+        >
+          Read abstract
         </button>
-        <p class="abstract-text" style="display: none; margin-top: 10px; font-size: 0.9rem; color: var(--muted); line-height: 1.6;"></p>
+        <p class="abstract-text publication-abstract-text" hidden></p>
       </div>
     </article>
   `;
@@ -436,6 +444,84 @@ function renderPublications(years, yearTotals = {}) {
       `;
     })
     .join("");
+  queueRevealElements(publicationsList);
+}
+
+function syncHeaderState() {
+  if (!siteHeader) {
+    return;
+  }
+
+  siteHeader.classList.toggle("has-scrolled", window.scrollY > 18);
+}
+
+function revealTargets(root = document) {
+  return Array.from(
+    root.querySelectorAll(
+      ".hero, .section, .metric-card, .hero-panel-head, .hero-figure, .hero-note, .publication-year, .publication-entry",
+    ),
+  );
+}
+
+function queueRevealElements(root = document) {
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  if (prefersReducedMotion.matches) {
+    return;
+  }
+
+  const elements = revealTargets(root).filter((element) => !element.dataset.revealReady);
+
+  for (const [index, element] of elements.entries()) {
+    element.dataset.revealReady = "true";
+    element.classList.add("reveal-on-scroll");
+
+    const parent = element.parentElement;
+    const siblingIndex = parent ? Array.from(parent.children).indexOf(element) : index;
+    element.style.setProperty(
+      "--reveal-delay",
+      `${Math.min(Math.max(siblingIndex, 0), 5) * 70}ms`,
+    );
+
+    if (revealObserver) {
+      revealObserver.observe(element);
+    } else {
+      element.classList.add("is-visible");
+    }
+  }
+}
+
+function initMotion() {
+  syncHeaderState();
+  window.addEventListener("scroll", syncHeaderState, { passive: true });
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
+
+  if (!("IntersectionObserver" in window)) {
+    queueRevealElements(document);
+    return;
+  }
+
+  revealObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) {
+          continue;
+        }
+
+        entry.target.classList.add("is-visible");
+        revealObserver.unobserve(entry.target);
+      }
+    },
+    {
+      rootMargin: "0px 0px -12% 0px",
+      threshold: 0.14,
+    },
+  );
+
+  queueRevealElements(document);
 }
 
 function setActiveType(type) {
@@ -594,9 +680,10 @@ if (publicationsList) {
       const btn = event.target;
       const container = btn.nextElementSibling;
       
-      if (container.style.display === "block") {
-        container.style.display = "none";
-        btn.textContent = "Read Abstract ↓";
+      if (!container.hidden) {
+        container.hidden = true;
+        btn.textContent = "Read abstract";
+        btn.setAttribute("aria-expanded", "false");
         return;
       }
 
@@ -646,10 +733,12 @@ if (publicationsList) {
         }
       }
 
-      container.style.display = "block";
-      btn.textContent = "Hide Abstract ↑";
+      container.hidden = false;
+      btn.textContent = "Hide abstract";
+      btn.setAttribute("aria-expanded", "true");
     }
   });
 }
 
+initMotion();
 loadPublications();
