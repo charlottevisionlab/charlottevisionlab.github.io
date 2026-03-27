@@ -901,6 +901,16 @@ body::before {
   color: #fdfdf8;
 }
 
+.research-card-featured {
+  border-color: rgba(4, 107, 85, 0.32);
+  background:
+    linear-gradient(155deg, rgba(4, 107, 85, 0.09), rgba(11, 59, 49, 0.08)),
+    var(--surface);
+  box-shadow:
+    0 18px 34px rgba(8, 32, 28, 0.08),
+    0 0 0 1px rgba(4, 107, 85, 0.12) inset;
+}
+
 .cta-band {
   display: grid;
   grid-template-columns: 1.2fr 1fr auto;
