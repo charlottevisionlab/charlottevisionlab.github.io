@@ -28,7 +28,7 @@ const DBLP_FEEDS = [
 ];
 
 const MIN_PUBLICATION_YEAR = 2022;
-const PAPERS_PAGE_SIZE = 10;
+const PAPERS_PAGE_SIZE = 20;
 
 let allPublications = [];
 let publicationsState = {
