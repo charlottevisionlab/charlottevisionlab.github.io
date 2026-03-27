@@ -551,6 +551,9 @@ async function loadPublications() {
     return;
   }
 
+  // Helper function to strip punctuation and spaces for a bulletproof title match
+  const normalizeForMatch = (title) => title.toLowerCase().replace(/[^a-z0-9]/g, "");
+
   try {
     const xmlDocs = await Promise.all(
       DBLP_FEEDS.map(async (feed) => {
@@ -565,13 +568,59 @@ async function loadPublications() {
       }),
     );
 
-    const entries = xmlDocs.flatMap(({ doc, name }) =>
+    const dblpEntries = xmlDocs.flatMap(({ doc, name }) =>
       Array.from(doc.querySelectorAll("r > article, r > inproceedings"))
         .map((node) => parseRecord(node, name))
         .filter(Boolean),
     );
 
-    allPublications = dedupeEntries(entries);
+    // Create a Set of all titles currently in DBLP for fast lookup
+    const existingDblpTitles = new Set(dblpEntries.map(e => normalizeForMatch(e.title)));
+
+    const manualEntries = [
+      {
+        authors: ["Wenhan Wu", "Zhishuai Guo", "Chen Chen", "Srijan Das", "Hongfei Xue", "Pu Wang", "Aidong Lu"],
+        link: "https://arxiv.org/abs/2603.21327",
+        sourceName: "Srijan Das",
+        title: "KHMP: Frequency-Domain Kalman Refinement for High-Fidelity Human Motion Prediction",
+        venue: "arXiv Preprint",
+        venueLabel: "arXiv",
+        venueType: "preprint",
+        year: 2026,
+      },
+      {
+        authors: ["Manish Kumar Govind", "Dominick Reilly", "Pu Wang", "Srijan Das"],
+        link: "https://arxiv.org/abs/2602.20231",
+        sourceName: "Srijan Das",
+        title: "UniLACT: Depth-Aware RGB Latent Action Learning for Vision-Language-Action Models",
+        venue: "arXiv Preprint",
+        venueLabel: "arXiv",
+        venueType: "preprint",
+        year: 2026,
+      },
+      {
+        authors: ["Corentin Dumery", "Noa Etté", "Aoxiang Fan", "Ren Li", "Jingyi Xu", "Hieu Le", "Pascal Fua"],
+        link: "https://arxiv.org/abs/2603.15470",
+        sourceName: "Hieu Le",
+        title: "Automated Counting of Stacked Objects in Industrial Inspection",
+        venue: "arXiv Preprint",
+        venueLabel: "arXiv",
+        venueType: "preprint",
+        year: 2026,
+      }
+    ];
+
+    // Only keep manual entries that haven't been indexed by DBLP yet
+    const activeManualEntries = manualEntries.filter(entry => {
+        return !existingDblpTitles.has(normalizeForMatch(entry.title));
+    });
+
+    for (const entry of activeManualEntries) {
+      entry.tags = inferTags(entry);
+    }
+
+    // Combine DBLP entries with the remaining manual entries before standard deduping
+    allPublications = dedupeEntries([...dblpEntries, ...activeManualEntries]);
     syncPapersSelectOptions(allPublications);
     rerenderPublications();
   } catch (error) {
