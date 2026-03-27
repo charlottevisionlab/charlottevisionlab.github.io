@@ -281,7 +281,7 @@ body::before {
   margin: 0;
   /* font-family: "Instrument Serif", serif; */
   /* font-family: "Space Grotesk", "Manrope", sans-serif; */
-  font-family: "Playfair Display", "Instrument Serif", serif;
+  font-family: "Oswald", "Manrope", sans-serif;
   font-weight: 400;
   line-height: 0.95;
   letter-spacing: -0.03em;
@@ -361,7 +361,7 @@ body::before {
   min-height: 88px;
   padding: 18px;
   /* font-family: "Instrument Serif", serif; */
-  font-family: "Playfair Display", "Instrument Serif", serif;
+  font-family: "Oswald", "Manrope", sans-serif;
   font-size: 2rem;
   color: var(--accent-deep);
 }
@@ -403,7 +403,7 @@ body::before {
 
 .flow-leaf strong {
   /* font-family: "Instrument Serif", serif; */
-  font-family: "Playfair Display", "Instrument Serif", serif;
+  font-family: "Oswald", "Manrope", sans-serif;
   font-size: 1.7rem;
   font-weight: 400;
   color: var(--accent-deep);
@@ -708,7 +708,7 @@ body::before {
 .publication-year-head h3 {
   margin: 0;
   /* font-family: "Instrument Serif", serif; */
-  font-family: "Playfair Display", "Instrument Serif", serif;
+  font-family: "Oswald", "Manrope", sans-serif;
   font-size: 2rem;
   font-weight: 400;
 }
