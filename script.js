@@ -273,7 +273,7 @@ function parseRecord(node, sourceName) {
     venue = venue.replace(/\s*\(\d+\)$/, "");
   }
   if (venue && venue.includes("CoRR")) {
-    venue = "arXiv Preprint";
+    venue = "arXiv";
   }
   
   const classification = classifyVenue(venue);
@@ -360,7 +360,6 @@ function entryMarkup(entry) {
     <article class="publication-entry">
       <div class="publication-meta">
         <span class="publication-chip">${entry.venueLabel}</span>
-        <span class="publication-chip">${entry.sourceName}</span>
       </div>
       <h5>${title}</h5>
       <p>${authors}</p>
@@ -579,20 +578,20 @@ async function loadPublications() {
 
     const manualEntries = [
       {
-        authors: ["Wenhan Wu", "Zhishuai Guo", "Chen Chen", "Srijan Das", "Hongfei Xue", "Pu Wang", "Aidong Lu"],
-        link: "https://arxiv.org/abs/2603.21327",
+        authors: ["Manish Kumar Govind", "Dominick Reilly", "Pu Wang", "Srijan Das"],
+        link: "https://arxiv.org/abs/2602.20231",
         sourceName: "Srijan Das",
-        title: "KHMP: Frequency-Domain Kalman Refinement for High-Fidelity Human Motion Prediction",
+        title: "UniLACT: Depth-Aware RGB Latent Action Learning for Vision-Language-Action Models",
         venue: "arXiv Preprint",
         venueLabel: "arXiv",
         venueType: "preprint",
         year: 2026,
       },
       {
-        authors: ["Manish Kumar Govind", "Dominick Reilly", "Pu Wang", "Srijan Das"],
-        link: "https://arxiv.org/abs/2602.20231",
+        authors: ["Wenhan Wu", "Zhishuai Guo", "Chen Chen", "Srijan Das", "Hongfei Xue", "Pu Wang", "Aidong Lu"],
+        link: "https://arxiv.org/abs/2603.21327",
         sourceName: "Srijan Das",
-        title: "UniLACT: Depth-Aware RGB Latent Action Learning for Vision-Language-Action Models",
+        title: "KHMP: Frequency-Domain Kalman Refinement for High-Fidelity Human Motion Prediction",
         venue: "arXiv Preprint",
         venueLabel: "arXiv",
         venueType: "preprint",
