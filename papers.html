@@ -1,133 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Charlotte Vision Lab | Papers</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Sora:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="./styles.css" />
-    <script>
-      window.MathJax = {
-        tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
-      };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  </head>
-  <body>
-    <div class="page-shell">
-      <header class="site-header">
-        <a class="brand" href="./index.html#top" aria-label="Charlotte Vision Lab home">
-          <span class="brand-mark">
-            <img src="./images/logo.png" alt="Charlotte Vision Lab logo" />
-          </span>
-          <span class="brand-copy">
-            <strong>Charlotte Vision Lab</strong>
-            <span>UNC Charlotte</span>
-          </span>
-        </a>
-        <nav class="site-nav" aria-label="Primary">
-          <a href="./index.html#news">News</a>
-          <a href="./members.html">Members</a>
-          <a href="./papers.html">Publications</a>
-          <details class="nav-dropdown">
-            <summary>Research</summary>
-            <div class="nav-dropdown-menu" role="menu" aria-label="Research links">
-              <a href="./index.html#research">Directions</a>
-              <a href="./index.html#highlights">Highlights</a>
-            </div>
-          </details>
-        </nav>
-      </header>
 
-      <main id="top">
-        <section class="section" id="papers">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">Research</p>
-              <h2>Papers</h2>
-            </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Charlotte Vision Lab | Papers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Sora:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="./index.html#top" aria-label="Charlotte Vision Lab home">
+        <span class="brand-mark">
+          <img src="./images/logo.png" alt="Charlotte Vision Lab logo" />
+        </span>
+        <span class="brand-copy">
+          <strong>Charlotte Vision Lab</strong>
+          <span>UNC Charlotte</span>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <!-- <a href="./index.html#news">News</a> -->
+        <a href="./members.html">Members</a>
+        <a href="./papers.html">Publications</a>
+        <details class="nav-dropdown">
+          <summary>Research</summary>
+          <div class="nav-dropdown-menu" role="menu" aria-label="Research links">
+            <a href="./index.html#research">Directions</a>
+            <a href="./index.html#highlights">Highlights</a>
           </div>
+        </details>
+      </nav>
+    </header>
 
-          <div class="papers-summary-strip" aria-label="Papers page features">
-            <span class="data-pill">Live DBLP Feed</span>
-            <span class="data-pill">Topic + Venue Filters</span>
-            <span class="data-pill">Abstract Lookup</span>
+    <main id="top">
+      <section class="section" id="papers">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Research</p>
+            <h2>Papers</h2>
           </div>
+        </div>
 
-          <div class="papers-filter-shell" aria-label="Filter papers">
-            <h3 class="papers-filter-title">Filter papers</h3>
+        <div class="papers-summary-strip" aria-label="Papers page features">
+          <span class="data-pill">Live DBLP Feed</span>
+          <span class="data-pill">Topic + Venue Filters</span>
+          <span class="data-pill">Abstract Lookup</span>
+        </div>
 
-            <div class="papers-filter-grid">
-              <label class="papers-filter-field">
-                <span class="papers-filter-label">Search</span>
-                <input id="publications-search" type="search" autocomplete="off" />
-              </label>
+        <div class="papers-filter-shell" aria-label="Filter papers">
+          <h3 class="papers-filter-title">Filter papers</h3>
 
-              <label class="papers-filter-field">
-                <span class="papers-filter-label">Research field</span>
-                <select id="papers-tag">
-                  <option value="">Any</option>
-                </select>
-              </label>
+          <div class="papers-filter-grid">
+            <label class="papers-filter-field">
+              <span class="papers-filter-label">Search</span>
+              <input id="publications-search" type="search" autocomplete="off" />
+            </label>
 
-              <label class="papers-filter-field">
-                <span class="papers-filter-label">Year</span>
-                <select id="papers-year">
-                  <option value="">Any</option>
-                </select>
-              </label>
+            <label class="papers-filter-field">
+              <span class="papers-filter-label">Research field</span>
+              <select id="papers-tag">
+                <option value="">Any</option>
+              </select>
+            </label>
 
-              <label class="papers-filter-field">
-                <span class="papers-filter-label">Type</span>
-                <select id="papers-type">
-                  <option value="all">Any</option>
-                  <option value="conference">Conference</option>
-                  <option value="journal">Journal</option>
-                  <option value="preprint">Preprint</option>
-                </select>
-              </label>
+            <label class="papers-filter-field">
+              <span class="papers-filter-label">Year</span>
+              <select id="papers-year">
+                <option value="">Any</option>
+              </select>
+            </label>
 
-              <label class="papers-filter-field">
-                <span class="papers-filter-label">Venue</span>
-                <select id="papers-venue">
-                  <option value="">Any</option>
-                </select>
-              </label>
+            <label class="papers-filter-field">
+              <span class="papers-filter-label">Type</span>
+              <select id="papers-type">
+                <option value="all">Any</option>
+                <option value="conference">Conference</option>
+                <option value="journal">Journal</option>
+                <option value="preprint">Preprint</option>
+              </select>
+            </label>
 
-              <div class="papers-filter-field papers-filter-field-actions">
-                <button class="papers-filter-reset" id="papers-reset" type="button">
-                  Reset
-                </button>
-                <div class="papers-filter-count">
-                  <span id="publications-count" class="publication-chip">—</span>
-                </div>
+            <label class="papers-filter-field">
+              <span class="papers-filter-label">Venue</span>
+              <select id="papers-venue">
+                <option value="">Any</option>
+              </select>
+            </label>
+
+            <div class="papers-filter-field papers-filter-field-actions">
+              <button class="papers-filter-reset" id="papers-reset" type="button">
+                Reset
+              </button>
+              <div class="papers-filter-count">
+                <span id="publications-count" class="publication-chip">—</span>
               </div>
             </div>
           </div>
+        </div>
 
-          <div id="publications-status" class="publications-status">
-            Loading publications from DBLP...
-          </div>
-          <div id="publications-list" class="publications-list" aria-live="polite"></div>
+        <div id="publications-status" class="publications-status">
+          Loading publications from DBLP...
+        </div>
+        <div id="publications-list" class="publications-list" aria-live="polite"></div>
 
-          <nav class="papers-pager" aria-label="Papers pagination">
-            <button id="papers-prev" class="papers-pager-button" type="button">
-              Previous
-            </button>
-            <div id="papers-pageinfo" class="papers-pager-info">—</div>
-            <button id="papers-next" class="papers-pager-button" type="button">
-              Next
-            </button>
-          </nav>
-        </section>
-      </main>
-    </div>
+        <nav class="papers-pager" aria-label="Papers pagination">
+          <button id="papers-prev" class="papers-pager-button" type="button">
+            Previous
+          </button>
+          <div id="papers-pageinfo" class="papers-pager-info">—</div>
+          <button id="papers-next" class="papers-pager-button" type="button">
+            Next
+          </button>
+        </nav>
+      </section>
+    </main>
+  </div>
 
-    <script src="./script.js"></script>
-  </body>
+  <script src="./script.js"></script>
+</body>
+
 </html>
