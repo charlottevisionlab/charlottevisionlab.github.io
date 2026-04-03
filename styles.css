@@ -1279,6 +1279,15 @@ select {
   padding: 24px;
 }
 
+/* Papers page: remove outer list container card/border */
+#papers .publication-year {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
 .publication-year-head {
   display: flex;
   align-items: baseline;
