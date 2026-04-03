@@ -577,6 +577,11 @@ async function loadPublications() {
     const existingDblpTitles = new Set(dblpEntries.map(e => normalizeForMatch(e.title)));
 
     const manualEntries = [
+
+
+      
+
+
       {
         authors: ["Manish Kumar Govind", "Dominick Reilly", "Pu Wang", "Srijan Das"],
         link: "https://arxiv.org/abs/2602.20231",
@@ -605,6 +610,16 @@ async function loadPublications() {
         venue: "arXiv Preprint",
         venueLabel: "arXiv",
         venueType: "preprint",
+        year: 2026,
+      },
+      {
+        authors: ["Arkaprava Sinha" ,"Monish Soundar Raj", "Pu Wang",  "Ahmed Helmy", "Hieu Le", "Srijan Das"],
+        link: "https://thearkaprava.github.io/",
+        sourceName: "Srijan Das",
+        title: "MS-Temba",
+        venue: "CVPR",
+        venueLabel: "CVPR",
+        venueType: "conference",
         year: 2026,
       }
     ];
