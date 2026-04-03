@@ -621,7 +621,26 @@ async function loadPublications() {
         venueLabel: "CVPR",
         venueType: "conference",
         year: 2026,
-      }
+      },
+      {
+        authors: [
+          "Ruoyu Xue",
+          "Hieu Le",
+          "Jingyi Xu",
+          "Sounak Mondal",
+          "Abe Leite",
+          "Gregory Zelinsky",
+          "Minh Hoai",
+          "Dimitris Samaras",
+        ],
+        link: "https://arxiv.org/abs/2512.06662",
+        sourceName: "Hieu Le",
+        title: "Personalized Image Descriptions from Attention Sequences",
+        venue: "CVPR",
+        venueLabel: "CVPR",
+        venueType: "conference",
+        year: 2026,
+      },
     ];
 
     // Only keep manual entries that haven't been indexed by DBLP yet
