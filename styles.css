@@ -513,8 +513,7 @@ select {
 
 .data-pill,
 .publication-chip,
-.inline-list li,
-.person-tags span {
+.inline-list li {
   display: inline-flex;
   align-items: center;
   min-height: 34px;
@@ -815,6 +814,46 @@ select {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.students-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px 22px;
+}
+
+.students-list article {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 70%;
+}
+
+.student-avatar {
+  width: 170px;
+  height: 170px;
+  flex-basis: 170px;
+  border-radius: 24px;
+}
+
+.student-name {
+  margin: 6px 0 0;
+  font-size: 1.3rem;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.student-role {
+  margin: 2px 0 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--muted-ink);
+  text-align: center;
+}
+
+.students-list .person-tags {
+  text-align: center;
+}
+
 .work-grid,
 .sources-grid,
 .publication-year-grid {
@@ -888,10 +927,18 @@ select {
   letter-spacing: 0.06em;
 }
 
+.students-list .student-avatar {
+  flex: 0 0 170px;
+  width: 170px;
+  height: 170px;
+  flex-basis: 170px;
+  border-radius: 24px;
+}
+
 .avatar-faculty {
-  width: 98px;
-  height: 98px;
-  flex-basis: 98px;
+  width: 120px;
+  height: 120px;
+  flex-basis: 120px;
 }
 
 .feature-card h3,
@@ -913,6 +960,19 @@ select {
   margin: 18px 0 0;
   padding: 0;
   list-style: none;
+}
+
+.person-tags {
+  display: block;
+  margin-top: 12px;
+  padding: 0;
+  list-style: none;
+  font-size: 0.86rem;
+  color: var(--muted-strong);
+  width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .source-links {
@@ -1529,9 +1589,9 @@ code {
   }
 
   .avatar-faculty {
-    width: 88px;
-    height: 88px;
-    flex-basis: 88px;
+    width: 108px;
+    height: 108px;
+    flex-basis: 108px;
   }
 
   .hero h1,
