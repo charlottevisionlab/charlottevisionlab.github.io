@@ -261,13 +261,13 @@ function classifyVenue(venue) {
 
 function parseRecord(node, sourceName) {
   let title = firstText(node, "title");
-  
+
   if (title.endsWith(".")) {
     title = title.slice(0, -1);
   }
-  
+
   const year = Number.parseInt(firstText(node, "year"), 10);
-  
+
   let venue = firstText(node, "booktitle") || firstText(node, "journal");
   if (venue) {
     venue = venue.replace(/\s*\(\d+\)$/, "");
@@ -275,7 +275,7 @@ function parseRecord(node, sourceName) {
   if (venue && venue.includes("CoRR")) {
     venue = "arXiv";
   }
-  
+
   const classification = classifyVenue(venue);
 
   if (!title || !year || year < MIN_PUBLICATION_YEAR || !classification) {
@@ -428,7 +428,7 @@ function renderPublications(years, yearTotals = {}) {
   publicationsStatus.hidden = true;
   publicationsList.innerHTML = years
     .map((bucket) => {
-      const totalForYear = yearTotals[bucket.year] || 
+      const totalForYear = yearTotals[bucket.year] ||
         (bucket.conference.length + bucket.journal.length + (bucket.preprint ? bucket.preprint.length : 0));
       return `
         <section class="publication-year">
@@ -579,7 +579,7 @@ async function loadPublications() {
     const manualEntries = [
 
 
-      
+
 
 
       {
@@ -613,10 +613,10 @@ async function loadPublications() {
         year: 2026,
       },
       {
-        authors: ["Arkaprava Sinha" ,"Monish Soundar Raj", "Pu Wang",  "Ahmed Helmy", "Hieu Le", "Srijan Das"],
+        authors: ["Arkaprava Sinha", "Monish Soundar Raj", "Pu Wang", "Ahmed Helmy", "Hieu Le", "Srijan Das"],
         link: "https://thearkaprava.github.io/",
         sourceName: "Srijan Das",
-        title: "MS-Temba",
+        title: "MS-Temba: Multi-Scale Temporal Mamba for Understanding Long Untrimmed Videos",
         venue: "CVPR",
         venueLabel: "CVPR",
         venueType: "conference",
@@ -645,7 +645,7 @@ async function loadPublications() {
 
     // Only keep manual entries that haven't been indexed by DBLP yet
     const activeManualEntries = manualEntries.filter(entry => {
-        return !existingDblpTitles.has(normalizeForMatch(entry.title));
+      return !existingDblpTitles.has(normalizeForMatch(entry.title));
     });
 
     for (const entry of activeManualEntries) {
@@ -761,7 +761,7 @@ if (publicationsList) {
     if (event.target.classList.contains("fetch-abstract-btn")) {
       const btn = event.target;
       const container = btn.nextElementSibling;
-      
+
       if (!container.hidden) {
         container.hidden = true;
         btn.textContent = "Read abstract";
@@ -773,37 +773,37 @@ if (publicationsList) {
         btn.textContent = "Loading...";
         try {
           const rawTitle = decodeURIComponent(btn.getAttribute("data-title"));
-          
+
           const cleanTitle = rawTitle.replace(/[^a-zA-Z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
-          
+
           const url = `https://api.openalex.org/works?filter=title.search:${encodeURIComponent(cleanTitle)}&select=abstract_inverted_index`;
-          
+
           const response = await fetch(url);
-          
+
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}`);
           }
-          
+
           const data = await response.json();
-          
+
           if (data.results && data.results.length > 0 && data.results[0].abstract_inverted_index) {
             const inverted = data.results[0].abstract_inverted_index;
             const words = [];
-            
+
             for (const [word, positions] of Object.entries(inverted)) {
               for (const pos of positions) {
                 words[pos] = word;
               }
             }
-            
+
             let abstractText = words.join(" ");
-            
+
             abstractText = abstractText.replace(/\\textbf{([^}]+)}/g, "<strong>$1</strong>");
             abstractText = abstractText.replace(/\\emph{([^}]+)}/g, "<em>$1</em>");
             abstractText = abstractText.replace(/\\textit{([^}]+)}/g, "<em>$1</em>");
-            
+
             container.innerHTML = abstractText;
-            
+
             if (window.MathJax) {
               MathJax.typesetPromise([container]);
             }
