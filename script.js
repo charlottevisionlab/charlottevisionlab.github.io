@@ -43,6 +43,91 @@ const PROFESSOR_PUBLICATION_FEEDS = [
   },
 ];
 
+const MANUAL_PUBLICATION_ENTRIES = [
+  {
+    authors: ["Manish Kumar Govind", "Dominick Reilly", "Pu Wang", "Srijan Das"],
+    link: "https://arxiv.org/abs/2602.20231",
+    sourceName: "Srijan Das",
+    title: "UniLACT: Depth-Aware RGB Latent Action Learning for Vision-Language-Action Models",
+    venue: "arXiv Preprint",
+    venueLabel: "arXiv",
+    venueType: "preprint",
+    year: 2026,
+  },
+  {
+    authors: [
+      "Wenhan Wu",
+      "Zhishuai Guo",
+      "Chen Chen",
+      "Srijan Das",
+      "Hongfei Xue",
+      "Pu Wang",
+      "Aidong Lu",
+    ],
+    link: "https://arxiv.org/abs/2603.21327",
+    sourceName: "Srijan Das",
+    title: "KHMP: Frequency-Domain Kalman Refinement for High-Fidelity Human Motion Prediction",
+    venue: "arXiv Preprint",
+    venueLabel: "arXiv",
+    venueType: "preprint",
+    year: 2026,
+  },
+  {
+    authors: [
+      "Corentin Dumery",
+      "Noa Etté",
+      "Aoxiang Fan",
+      "Ren Li",
+      "Jingyi Xu",
+      "Hieu Le",
+      "Pascal Fua",
+    ],
+    link: "https://arxiv.org/abs/2603.15470",
+    sourceName: "Hieu Le",
+    title: "Automated Counting of Stacked Objects in Industrial Inspection",
+    venue: "arXiv Preprint",
+    venueLabel: "arXiv",
+    venueType: "preprint",
+    year: 2026,
+  },
+  {
+    authors: [
+      "Arkaprava Sinha",
+      "Monish Soundar Raj",
+      "Pu Wang",
+      "Ahmed Helmy",
+      "Hieu Le",
+      "Srijan Das",
+    ],
+    link: "https://arxiv.org/abs/2501.06138",
+    sourceName: "Srijan Das",
+    title: "MS-Temba: Multi-Scale Temporal Mamba for Understanding Long Untrimmed Videos",
+    venue: "CVPR",
+    venueLabel: "CVPR",
+    venueType: "conference",
+    year: 2026,
+  },
+  {
+    authors: [
+      "Ruoyu Xue",
+      "Hieu Le",
+      "Jingyi Xu",
+      "Sounak Mondal",
+      "Abe Leite",
+      "Gregory Zelinsky",
+      "Minh Hoai",
+      "Dimitris Samaras",
+    ],
+    link: "https://arxiv.org/abs/2512.06662",
+    sourceName: "Hieu Le",
+    title: "Personalized Image Descriptions from Attention Sequences",
+    venue: "CVPR",
+    venueLabel: "CVPR",
+    venueType: "conference",
+    year: 2026,
+  },
+];
+
 const MIN_PUBLICATION_YEAR = 2022;
 const PAPERS_PAGE_SIZE = 20;
 
@@ -603,19 +688,46 @@ function groupByYear(entries) {
     }));
 }
 
+function titlesMatch(leftTitle, rightTitle) {
+  const left = normalizeForMatch(leftTitle);
+  const right = normalizeForMatch(rightTitle);
+
+  if (!left || !right) {
+    return false;
+  }
+
+  if (left === right) {
+    return true;
+  }
+
+  const shorter = left.length < right.length ? left : right;
+  const longer = left.length < right.length ? right : left;
+  return shorter.length >= 8 && longer.includes(shorter);
+}
+
+function isPublicationDuplicate(candidate, existingEntries) {
+  return existingEntries.some((entry) => titlesMatch(candidate.title, entry.title));
+}
+
 function dedupeEntries(entries) {
-  const byTitle = new Map();
+  const kept = [];
 
   for (const entry of entries) {
-    const key = normalizeForMatch(entry.title);
-    const existing = byTitle.get(key);
+    const duplicateIndex = kept.findIndex((existing) =>
+      titlesMatch(existing.title, entry.title),
+    );
 
-    if (!existing || publicationRichness(entry) > publicationRichness(existing)) {
-      byTitle.set(key, entry);
+    if (duplicateIndex === -1) {
+      kept.push(entry);
+      continue;
+    }
+
+    if (publicationRichness(entry) > publicationRichness(kept[duplicateIndex])) {
+      kept[duplicateIndex] = entry;
     }
   }
 
-  return Array.from(byTitle.values());
+  return kept;
 }
 
 function renderPublicationThumbnail(entry) {
@@ -873,7 +985,19 @@ async function loadPublications() {
       console.warn(error);
     }
 
-    allPublications = dedupeEntries([...professorEntries, ...dblpEntries]);
+    const syncedSources = [...professorEntries, ...dblpEntries];
+    const manualEntries = MANUAL_PUBLICATION_ENTRIES.filter(
+      (entry) => !isPublicationDuplicate(entry, syncedSources),
+    ).map((entry) => ({
+      ...entry,
+      tags: inferTags(entry),
+    }));
+
+    allPublications = dedupeEntries([
+      ...professorEntries,
+      ...manualEntries,
+      ...dblpEntries,
+    ]);
     syncPapersSelectOptions(allPublications);
     rerenderPublications();
   } catch (error) {
