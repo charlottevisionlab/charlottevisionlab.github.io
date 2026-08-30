@@ -28,7 +28,6 @@
         </span>
       </a>
       <nav class="site-nav" aria-label="Primary">
-        <!-- <a href="#news">News</a> -->
         <a href="./members.html">Members</a>
         <a href="./papers.html">Publications</a>
         <details class="nav-dropdown">
@@ -85,10 +84,18 @@
         </div>
       </section>
 
+      <section class="section" id="news">
+        <div class="section-heading">
+          <div>
+            <h2>News</h2>
+          </div>
+        </div>
+        <ol class="news-feed" id="news-list" aria-label="Lab news"></ol>
+      </section>
+
       <section class="section" id="research">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Research</p>
             <h2>Our Research Directions</h2>
           </div>
         </div>
@@ -125,55 +132,54 @@
       <section class="section" id="highlights">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Highlights</p>
-            <h2>Selected Publications and Preprints</h2>
+            <h2>Highlights</h2>
           </div>
         </div>
         <div class="work-grid">
           <article class="work-card">
+            <p class="feature-kicker">ECCV 2026</p>
+            <h3>VisCoP</h3>
+            <p>
+              Visual probing for efficient domain adaptation of vision-language
+              models with minimal changes to pretrained parameters.
+            </p>
+            <a class="text-link" href="https://arxiv.org/abs/2510.13808">
+              View paper
+            </a>
+          </article>
+
+          <article class="work-card">
+            <p class="feature-kicker">ECCV 2026</p>
+            <h3>Ego2Exo VLM</h3>
+            <p>
+              Learning egocentric cues from exocentric video to improve
+              vision-language understanding of daily living activities.
+            </p>
+            <a class="text-link" href="https://arxiv.org/abs/2501.05711">
+              View paper
+            </a>
+          </article>
+
+          <article class="work-card">
+            <p class="feature-kicker">ECCV 2026</p>
+            <h3>3D FaceShell</h3>
+            <p>
+              A privacy-preserving framework that controls how vision-language
+              models interpret 3D face avatars while preserving identity.
+            </p>
+            <a class="text-link" href="https://arxiv.org/abs/2607.16280">
+              View paper
+            </a>
+          </article>
+
+          <article class="work-card">
             <p class="feature-kicker">CVPR 2026</p>
             <h3>MS-Temba</h3>
             <p>
-              Temporal modeling for long untrimmed video understanding.
+              Multi-scale temporal Mamba for efficient temporal action detection
+              in long untrimmed videos.
             </p>
             <a class="text-link" href="https://arxiv.org/abs/2501.06138">
-              View paper
-            </a>
-          </article>
-
-          <article class="work-card">
-            <p class="feature-kicker">CVPR 2026</p>
-            <h3>Personalized Image Descriptions from Attention Sequences</h3>
-            <p>
-              A method to generate image descriptions in the style of a
-              subject using attention sequences.
-            </p>
-            <a class="text-link" href="https://arxiv.org/pdf/2512.06662">
-              View paper
-            </a>
-          </article>
-
-          <article class="work-card">
-            <p class="feature-kicker">CVPR 2025</p>
-            <h3>LLAVIDAL</h3>
-            <p>
-              A multimodal large language vision model for daily activities of
-              living.
-            </p>
-            <a class="text-link"
-              href="https://openaccess.thecvf.com/content/CVPR2025/html/Reilly_LLAVIDAL_A_Large_LAnguage_VIsion_Model_for_Daily_Activities_of_CVPR_2025_paper.html">
-              View paper
-            </a>
-          </article>
-
-          <article class="work-card">
-            <p class="feature-kicker">Preprint</p>
-            <h3>UniLACT</h3>
-            <p>
-              A depth-aware latent action framework for vision-language-action
-              models in robot learning.
-            </p>
-            <a class="text-link" href="https://huggingface.co/papers/2602.20231">
               View paper
             </a>
           </article>
