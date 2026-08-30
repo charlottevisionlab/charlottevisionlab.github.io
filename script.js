@@ -131,6 +131,18 @@ const MANUAL_PUBLICATION_ENTRIES = [
 const MIN_PUBLICATION_YEAR = 2022;
 const PAPERS_PAGE_SIZE = 20;
 
+const LAB_MEMBERS = [
+  "Hieu Le",
+  "Srijan Das",
+  "Pu Wang",
+  "Dominick Reilly",
+  "Arkaprava Sinha",
+  "Manish Kumar Govind",
+  "Weston Bondurant",
+  "Wenhao Chi",
+  "Ba-Thinh Lam",
+];
+
 let allPublications = [];
 let publicationsState = {
   query: "",
@@ -403,7 +415,6 @@ function formatVenueLabel(venue, year) {
 
 function publicationRichness(entry) {
   let score = 0;
-  if (entry.thumbnail) score += 4;
   if (entry.abstract) score += 2;
   if (entry.link) score += 1;
   if (entry.authors?.length) score += 1;
@@ -429,7 +440,6 @@ function mapYamlPublication(paper, sourceName, baseUrl) {
     link,
     links,
     sourceName,
-    thumbnail: resolveAssetUrl(baseUrl, paper.thumbnail),
     title: normalizeText(paper.title),
     venue: formatVenueLabel(venue, year),
     venueLabel: classification.label,
@@ -442,15 +452,44 @@ function mapYamlPublication(paper, sourceName, baseUrl) {
 }
 
 function parseSrijanAuthors(cell) {
-  const clone = cell.cloneNode(true);
-  for (const node of clone.querySelectorAll("script, papertitle, em, a, p")) {
-    node.remove();
+  const chunks = [];
+  let afterTitle = false;
+
+  for (const node of cell.childNodes) {
+    if (node.nodeType === 1) {
+      if (node.querySelector?.("papertitle") || node.tagName === "PAPERTITLE") {
+        afterTitle = true;
+        continue;
+      }
+
+      if (node.tagName === "EM" || node.querySelector?.("em")) {
+        break;
+      }
+
+      if (!afterTitle) {
+        continue;
+      }
+
+      if (node.tagName === "BR") {
+        continue;
+      }
+
+      if (node.tagName === "STRONG" || node.tagName === "B") {
+        chunks.push(node.textContent);
+      }
+    } else if (node.nodeType === 3 && afterTitle) {
+      chunks.push(node.textContent);
+    }
   }
 
-  return normalizeText(clone.textContent)
+  const authorText = normalizeText(chunks.join(""))
+    .replace(/,\s*and\s+/gi, ", ")
+    .replace(/\.+$/, "");
+
+  return authorText
     .split(",")
     .map((author) => author.replace(/\*+$/, "").trim())
-    .filter(Boolean);
+    .filter((author) => author && !/^[./\s]+$/.test(author) && !/^and$/i.test(author));
 }
 
 function parseSrijanPublications(html, sourceName, baseUrl) {
@@ -507,14 +546,6 @@ function parseSrijanPublications(html, sourceName, baseUrl) {
       .filter(Boolean);
     const abstract = paragraphs.at(-1) || "";
 
-    const image = row.querySelector("img");
-    const videoSource = row.querySelector("video source");
-    const thumbnail = image
-      ? resolveAssetUrl(baseUrl, image.getAttribute("src"))
-      : videoSource
-        ? resolveAssetUrl(baseUrl, videoSource.getAttribute("src"))
-        : "";
-
     const classification = classifyPublicationVenue(venueText);
     const entry = {
       authors: parseSrijanAuthors(contentCell),
@@ -522,13 +553,11 @@ function parseSrijanPublications(html, sourceName, baseUrl) {
       link,
       links,
       sourceName,
-      thumbnail,
       title,
       venue: formatVenueLabel(venueText, year),
       venueLabel: classification.label,
       venueType: classification.type,
       year,
-      mediaType: image ? "image" : videoSource ? "video" : "",
     };
 
     entry.tags = inferTags(entry);
@@ -649,18 +678,36 @@ function parseRecord(node, sourceName) {
   return entry;
 }
 
+function venueSortRank(entry) {
+  const order = {
+    ECCV: 0,
+    CVPR: 1,
+    ICCV: 2,
+    NeurIPS: 3,
+    ICML: 4,
+    ICLR: 5,
+    WACV: 6,
+    AAAI: 7,
+    arXiv: 100,
+    Other: 150,
+  };
+
+  return order[entry.venueLabel] ?? 120;
+}
+
 function sortEntries(entries) {
   return entries.sort((left, right) => {
     if (right.year !== left.year) {
       return right.year - left.year;
     }
 
-    if (left.venueType !== right.venueType) {
-      return left.venueType.localeCompare(right.venueType);
+    const venueRankDiff = venueSortRank(left) - venueSortRank(right);
+    if (venueRankDiff !== 0) {
+      return venueRankDiff;
     }
 
-    if (left.venueLabel !== right.venueLabel) {
-      return left.venueLabel.localeCompare(right.venueLabel);
+    if (left.venueType !== right.venueType) {
+      return left.venueType.localeCompare(right.venueType);
     }
 
     return left.title.localeCompare(right.title);
@@ -688,6 +735,40 @@ function groupByYear(entries) {
     }));
 }
 
+function extractArxivId(value) {
+  const match = String(value || "").match(/(\d{4}\.\d{4,5})/);
+  return match ? match[1] : "";
+}
+
+function getPublicationMatchKeys(entry) {
+  const keys = new Set();
+  const normalizedTitle = normalizeForMatch(entry.title);
+
+  if (normalizedTitle) {
+    keys.add(`title:${normalizedTitle}`);
+  }
+
+  const arxivId = extractArxivId(entry.link);
+  if (arxivId) {
+    keys.add(`arxiv:${arxivId}`);
+  }
+
+  for (const linkValue of Object.values(entry.links || {})) {
+    const linkedArxivId = extractArxivId(linkValue);
+    if (linkedArxivId) {
+      keys.add(`arxiv:${linkedArxivId}`);
+    }
+  }
+
+  const titlePrefix = normalizeText(entry.title).split(":")[0];
+  const prefixKey = normalizeForMatch(titlePrefix);
+  if (prefixKey.length >= 5) {
+    keys.add(`prefix:${prefixKey}`);
+  }
+
+  return keys;
+}
+
 function titlesMatch(leftTitle, rightTitle) {
   const left = normalizeForMatch(leftTitle);
   const right = normalizeForMatch(rightTitle);
@@ -702,20 +783,31 @@ function titlesMatch(leftTitle, rightTitle) {
 
   const shorter = left.length < right.length ? left : right;
   const longer = left.length < right.length ? right : left;
-  return shorter.length >= 8 && longer.includes(shorter);
+  return shorter.length >= 5 && longer.includes(shorter);
+}
+
+function entriesMatch(left, right) {
+  const leftKeys = getPublicationMatchKeys(left);
+  const rightKeys = getPublicationMatchKeys(right);
+
+  for (const key of leftKeys) {
+    if (rightKeys.has(key)) {
+      return true;
+    }
+  }
+
+  return titlesMatch(left.title, right.title);
 }
 
 function isPublicationDuplicate(candidate, existingEntries) {
-  return existingEntries.some((entry) => titlesMatch(candidate.title, entry.title));
+  return existingEntries.some((entry) => entriesMatch(candidate, entry));
 }
 
 function dedupeEntries(entries) {
   const kept = [];
 
   for (const entry of entries) {
-    const duplicateIndex = kept.findIndex((existing) =>
-      titlesMatch(existing.title, entry.title),
-    );
+    const duplicateIndex = kept.findIndex((existing) => entriesMatch(existing, entry));
 
     if (duplicateIndex === -1) {
       kept.push(entry);
@@ -753,9 +845,7 @@ function renderPublicationThumbnail(entry) {
 }
 
 function renderPublicationAbstract(entry) {
-  if (entry.abstract) {
-    return `<p class="publication-abstract-text">${escapeHtml(entry.abstract)}</p>`;
-  }
+  const prefilledAbstract = entry.abstract ? escapeHtml(entry.abstract) : "";
 
   return `
     <div class="publication-abstract">
@@ -764,31 +854,86 @@ function renderPublicationAbstract(entry) {
         type="button"
         aria-expanded="false"
         data-title="${encodeURIComponent(entry.title)}"
+        data-has-abstract="${entry.abstract ? "true" : "false"}"
       >
         Read abstract
       </button>
-      <p class="abstract-text publication-abstract-text" hidden></p>
+      <p class="abstract-text publication-abstract-text" hidden>${prefilledAbstract}</p>
     </div>
   `;
 }
 
+function normalizeAuthorName(name) {
+  return normalizeText(name).toLowerCase().replace(/\*+$/, "");
+}
+
+function isLabMember(authorName) {
+  const normalizedAuthor = normalizeAuthorName(authorName);
+
+  return LAB_MEMBERS.some((member) => {
+    const normalizedMember = normalizeAuthorName(member);
+
+    if (normalizedAuthor === normalizedMember) {
+      return true;
+    }
+
+    if (
+      normalizedAuthor.includes(normalizedMember) ||
+      normalizedMember.includes(normalizedAuthor)
+    ) {
+      return true;
+    }
+
+    const memberParts = normalizedMember.split(/\s+/);
+    const authorParts = normalizedAuthor.split(/\s+/);
+
+    return (
+      memberParts.length >= 2 &&
+      authorParts.length >= 2 &&
+      memberParts[0] === authorParts[0] &&
+      memberParts.at(-1) === authorParts.at(-1)
+    );
+  });
+}
+
+function formatAuthorName(authorName) {
+  const cleaned = normalizeText(authorName).replace(/\*+$/, "");
+
+  if (!isLabMember(cleaned)) {
+    return escapeHtml(cleaned);
+  }
+
+  return `<span class="publication-author-lab">${escapeHtml(cleaned)}</span>`;
+}
+
+function formatAuthors(authors = []) {
+  return authors.map(formatAuthorName).join(", ");
+}
+
+function formatPublicationTitle(entry) {
+  const venueInline = entry.venue
+    ? ` <span class="publication-venue-inline">(${escapeHtml(entry.venue)})</span>`
+    : "";
+  const titleText = escapeHtml(entry.title);
+
+  if (!entry.link) {
+    return `${titleText}${venueInline}`;
+  }
+
+  return `<a class="text-link" href="${escapeHtml(entry.link)}" target="_blank" rel="noreferrer noopener">${titleText}</a>${venueInline}`;
+}
+
 function entryMarkup(entry) {
-  const authors = (entry.authors || []).join(", ");
-  const title = entry.link
-    ? `<a class="text-link" href="${entry.link}" target="_blank" rel="noreferrer noopener">${entry.title}</a>`
-    : entry.title;
+  const authors = formatAuthors(entry.authors);
+  const title = formatPublicationTitle(entry);
   const thumbClass = entry.thumbnail ? " publication-entry-has-thumb" : "";
 
   return `
     <article class="publication-entry${thumbClass}">
       ${renderPublicationThumbnail(entry)}
       <div class="publication-entry-body">
-        <div class="publication-meta">
-          <span class="publication-chip">${entry.venueLabel}</span>
-        </div>
         <h5>${title}</h5>
         <p>${authors}</p>
-        <p>${entry.venue}</p>
         ${renderPublicationAbstract(entry)}
       </div>
     </article>
@@ -976,7 +1121,7 @@ async function loadPublications() {
       ),
     );
 
-    const professorEntries = professorResults.flat();
+    const professorEntries = dedupeEntries(professorResults.flat());
     let dblpEntries = [];
 
     try {
@@ -985,18 +1130,21 @@ async function loadPublications() {
       console.warn(error);
     }
 
-    const syncedSources = [...professorEntries, ...dblpEntries];
     const manualEntries = MANUAL_PUBLICATION_ENTRIES.filter(
-      (entry) => !isPublicationDuplicate(entry, syncedSources),
+      (entry) => !isPublicationDuplicate(entry, professorEntries),
     ).map((entry) => ({
       ...entry,
       tags: inferTags(entry),
     }));
 
+    const filteredDblpEntries = dblpEntries.filter(
+      (entry) => !isPublicationDuplicate(entry, [...professorEntries, ...manualEntries]),
+    );
+
     allPublications = dedupeEntries([
       ...professorEntries,
       ...manualEntries,
-      ...dblpEntries,
+      ...filteredDblpEntries,
     ]);
     syncPapersSelectOptions(allPublications);
     rerenderPublications();
@@ -1113,7 +1261,14 @@ if (publicationsList) {
         return;
       }
 
-      if (!container.textContent || container.textContent.includes("Failed") || container.textContent.includes("not available")) {
+      const hasPrefilledAbstract = btn.getAttribute("data-has-abstract") === "true";
+
+      if (
+        !hasPrefilledAbstract &&
+        (!container.textContent ||
+          container.textContent.includes("Failed") ||
+          container.textContent.includes("not available"))
+      ) {
         btn.textContent = "Loading...";
         try {
           const rawTitle = decodeURIComponent(btn.getAttribute("data-title"));

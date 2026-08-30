@@ -1404,6 +1404,20 @@ select {
   min-width: 0;
 }
 
+.publication-author-lab {
+  color: var(--accent-deep);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(var(--accent-rgb), 0.38);
+  text-underline-offset: 0.14em;
+}
+
+.publication-venue-inline {
+  color: var(--muted);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
 .publication-entry h5 {
   margin: 0 0 10px;
   font-size: 0.96rem;
