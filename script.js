@@ -17,118 +17,11 @@ const papersNextButton = document.querySelector("#papers-next");
 const papersPageInfo = document.querySelector("#papers-pageinfo");
 const newsList = document.querySelector("#news-list");
 
-const DBLP_FEEDS = [
-  {
-    name: "Hieu Le",
-    url: "https://dblp.org/pid/123/2117-1.xml",
-  },
-  {
-    name: "Srijan Das",
-    url: "https://dblp.org/pid/173/0062.xml",
-  },
-];
+// Single source of truth for the Publications page. Edit publications.yaml
+// to add or update papers; they appear after refresh/deploy.
+const LAB_PUBLICATIONS_URL = "./publications.yaml";
 
-const PROFESSOR_PUBLICATION_FEEDS = [
-  {
-    name: "Hieu Le",
-    type: "yaml",
-    url: "https://hieulem.github.io/publications.yaml",
-    baseUrl: "https://hieulem.github.io/",
-  },
-  {
-    name: "Srijan Das",
-    type: "html",
-    url: "https://srijandas07.github.io/index.html",
-    baseUrl: "https://srijandas07.github.io/",
-  },
-];
-
-const MANUAL_PUBLICATION_ENTRIES = [
-  {
-    authors: ["Manish Kumar Govind", "Dominick Reilly", "Pu Wang", "Srijan Das"],
-    link: "https://arxiv.org/abs/2602.20231",
-    sourceName: "Srijan Das",
-    title: "UniLACT: Depth-Aware RGB Latent Action Learning for Vision-Language-Action Models",
-    venue: "arXiv Preprint",
-    venueLabel: "arXiv",
-    venueType: "preprint",
-    year: 2026,
-  },
-  {
-    authors: [
-      "Wenhan Wu",
-      "Zhishuai Guo",
-      "Chen Chen",
-      "Srijan Das",
-      "Hongfei Xue",
-      "Pu Wang",
-      "Aidong Lu",
-    ],
-    link: "https://arxiv.org/abs/2603.21327",
-    sourceName: "Srijan Das",
-    title: "KHMP: Frequency-Domain Kalman Refinement for High-Fidelity Human Motion Prediction",
-    venue: "arXiv Preprint",
-    venueLabel: "arXiv",
-    venueType: "preprint",
-    year: 2026,
-  },
-  {
-    authors: [
-      "Corentin Dumery",
-      "Noa Etté",
-      "Aoxiang Fan",
-      "Ren Li",
-      "Jingyi Xu",
-      "Hieu Le",
-      "Pascal Fua",
-    ],
-    link: "https://arxiv.org/abs/2603.15470",
-    sourceName: "Hieu Le",
-    title: "Automated Counting of Stacked Objects in Industrial Inspection",
-    venue: "arXiv Preprint",
-    venueLabel: "arXiv",
-    venueType: "preprint",
-    year: 2026,
-  },
-  {
-    authors: [
-      "Arkaprava Sinha",
-      "Monish Soundar Raj",
-      "Pu Wang",
-      "Ahmed Helmy",
-      "Hieu Le",
-      "Srijan Das",
-    ],
-    link: "https://arxiv.org/abs/2501.06138",
-    sourceName: "Srijan Das",
-    title: "MS-Temba: Multi-Scale Temporal Mamba for Understanding Long Untrimmed Videos",
-    venue: "CVPR",
-    venueLabel: "CVPR",
-    venueType: "conference",
-    year: 2026,
-  },
-  {
-    authors: [
-      "Ruoyu Xue",
-      "Hieu Le",
-      "Jingyi Xu",
-      "Sounak Mondal",
-      "Abe Leite",
-      "Gregory Zelinsky",
-      "Minh Hoai",
-      "Dimitris Samaras",
-    ],
-    link: "https://arxiv.org/abs/2512.06662",
-    sourceName: "Hieu Le",
-    title: "Personalized Image Descriptions from Attention Sequences",
-    venue: "CVPR",
-    venueLabel: "CVPR",
-    venueType: "conference",
-    year: 2026,
-  },
-];
-
-const MIN_PUBLICATION_YEAR = 2022;
+const MIN_PUBLICATION_YEAR = 2015;
 const PAPERS_PAGE_SIZE = 20;
 
 const LAB_MEMBERS = [
@@ -231,7 +124,10 @@ function filteredPublications(entries, state) {
       entry.venue,
       entry.venueLabel,
       entry.sourceName,
+      entry.methodName,
       ...(entry.authors || []),
+      ...(entry.keywords || []),
+      ...(entry.tags || []),
     ]
       .join(" ")
       .toLowerCase();
@@ -326,44 +222,16 @@ function syncPapersSelectOptions(entries) {
   }
 }
 
-function parseAuthors(node) {
-  return Array.from(node.querySelectorAll("author"))
-    .map((author) => normalizeText(author.textContent).replace(/\s+\d+$/, ""))
-    .filter(Boolean);
-}
-
-function firstText(node, selector) {
-  return normalizeText(node.querySelector(selector)?.textContent || "");
-}
-
-function recordLink(node) {
-  const ee = node.querySelector("ee");
-  if (ee?.textContent) {
-    return normalizeText(ee.textContent);
-  }
-
-  const url = firstText(node, "url");
-  if (url.startsWith("db/")) {
-    return `https://dblp.org/rec/${url.slice(3)}`;
-  }
-
-  return "";
-}
-
 function normalizeForMatch(title) {
   return normalizeText(title).toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
-function resolveAssetUrl(baseUrl, assetPath) {
-  if (!assetPath || assetPath === "TBD") {
-    return "";
-  }
-
-  if (/^https?:\/\//i.test(assetPath)) {
-    return assetPath;
-  }
-
-  return new URL(assetPath.replace(/^\//, ""), baseUrl).href;
+function publicationRichness(entry) {
+  let score = 0;
+  if (entry.abstract) score += 2;
+  if (entry.link) score += 1;
+  if (entry.authors?.length) score += 1;
+  return score;
 }
 
 function pickPrimaryLink(links = {}) {
@@ -377,17 +245,6 @@ function pickPrimaryLink(links = {}) {
   }
 
   return "";
-}
-
-function inferYearFromArxivLink(link) {
-  const match = String(link || "").match(/(?:abs|pdf)\/(\d{2})(\d{2})\./);
-  if (!match) {
-    return null;
-  }
-
-  const prefix = Number(match[1]);
-  const year = prefix >= 90 ? 1900 + prefix : 2000 + prefix;
-  return year;
 }
 
 function classifyPublicationVenue(venue) {
@@ -413,15 +270,20 @@ function formatVenueLabel(venue, year) {
   return year ? `${normalizedVenue} ${year}` : normalizedVenue;
 }
 
-function publicationRichness(entry) {
-  let score = 0;
-  if (entry.abstract) score += 2;
-  if (entry.link) score += 1;
-  if (entry.authors?.length) score += 1;
-  return score;
+function resolvePublicationAsset(path) {
+  const value = normalizeText(path);
+  if (!value || /^(null|none|tbd)$/i.test(value)) {
+    return "";
+  }
+
+  if (/^https?:\/\//i.test(value) || value.startsWith("./") || value.startsWith("/")) {
+    return value;
+  }
+
+  return `./${value.replace(/^\.?\/+/, "")}`;
 }
 
-function mapYamlPublication(paper, sourceName, baseUrl) {
+function mapYamlPublication(paper, sourceName = "Charlotte Vision Lab") {
   const year = Number(paper.year);
   if (!paper.title || !year || year < MIN_PUBLICATION_YEAR) {
     return null;
@@ -431,192 +293,86 @@ function mapYamlPublication(paper, sourceName, baseUrl) {
   const classification = classifyPublicationVenue(venue);
   const links = paper.links || {};
   const link = pickPrimaryLink(links);
+  const thumbnail = resolvePublicationAsset(paper.thumbnail);
+  const keywords = (paper.keywords || [])
+    .map((keyword) => normalizeText(String(keyword)))
+    .filter(Boolean);
 
   const entry = {
     authors: (paper.authors || []).map((author) =>
       normalizeText(String(author).replace(/\*+$/, "")),
     ),
-    abstract: normalizeText(paper.tldr || ""),
+    abstract: normalizeText(paper.tldr || paper.abstract || ""),
     link,
     links,
     sourceName,
     title: normalizeText(paper.title),
+    methodName: normalizeText(paper["method-name"] || paper.method_name || ""),
     venue: formatVenueLabel(venue, year),
     venueLabel: classification.label,
     venueType: classification.type,
     year,
+    thumbnail,
+    mediaType: /\.(mp4|webm|mov)(\?|$)/i.test(thumbnail) ? "video" : "image",
+    keywords,
   };
 
-  entry.tags = inferTags(entry);
+  const inferred = inferTags(entry).filter((tag) => tag !== "Other");
+  const keywordTags = keywords.map((keyword) =>
+    keyword
+      .split(/[-_\s]+/)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" "),
+  );
+  const tags = Array.from(new Set([...inferred, ...keywordTags]));
+  entry.tags = tags.length ? tags : ["Other"];
   return entry;
 }
 
-function parseSrijanAuthors(cell) {
-  const chunks = [];
-  let afterTitle = false;
-
-  for (const node of cell.childNodes) {
-    if (node.nodeType === 1) {
-      if (node.querySelector?.("papertitle") || node.tagName === "PAPERTITLE") {
-        afterTitle = true;
-        continue;
-      }
-
-      if (node.tagName === "EM" || node.querySelector?.("em")) {
-        break;
-      }
-
-      if (!afterTitle) {
-        continue;
-      }
-
-      if (node.tagName === "BR") {
-        continue;
-      }
-
-      if (node.tagName === "STRONG" || node.tagName === "B") {
-        chunks.push(node.textContent);
-      }
-    } else if (node.nodeType === 3 && afterTitle) {
-      chunks.push(node.textContent);
-    }
+async function loadLabPublications() {
+  if (!window.jsyaml) {
+    throw new Error("js-yaml is required to load lab publications");
   }
 
-  const authorText = normalizeText(chunks.join(""))
-    .replace(/,\s*and\s+/gi, ", ")
-    .replace(/\.+$/, "");
-
-  return authorText
-    .split(",")
-    .map((author) => author.replace(/\*+$/, "").trim())
-    .filter((author) => author && !/^[./\s]+$/.test(author) && !/^and$/i.test(author));
-}
-
-function parseSrijanPublications(html, sourceName, baseUrl) {
-  const doc = new DOMParser().parseFromString(html, "text/html");
-  const rows = Array.from(doc.querySelectorAll("table.publications-table tr"));
-  const entries = [];
-  let currentYear = null;
-
-  for (const row of rows) {
-    const yearHeading = row.querySelector("subheading.pub-year");
-    if (yearHeading) {
-      const heading = normalizeText(yearHeading.textContent);
-      currentYear = /^\d{4}$/.test(heading) ? Number(heading) : heading;
-      continue;
-    }
-
-    const titleElement = row.querySelector("papertitle");
-    if (!titleElement) {
-      continue;
-    }
-
-    const contentCell = row.querySelector('td[style*="75%"]') || row.cells?.[1];
-    if (!contentCell) {
-      continue;
-    }
-
-    const title = normalizeText(titleElement.textContent);
-    const titleLink = titleElement.closest("a")?.href || "";
-    const venueElement = contentCell.querySelector("em");
-    const venueText = normalizeText(venueElement?.textContent || "")
-      .replace(/^to appear in\s+/i, "")
-      .replace(/\s*\(findings\)$/i, " (Findings)");
-
-    const links = {};
-    for (const anchor of contentCell.querySelectorAll("a")) {
-      const label = normalizeText(anchor.textContent).toLowerCase();
-      if (label === "arxiv") {
-        links.arxiv = anchor.href;
-      } else if (label === "code") {
-        links.code = anchor.href;
-      } else if (label === "website" || label === "project page") {
-        links.project = anchor.href;
-      }
-    }
-
-    const link = pickPrimaryLink(links) || titleLink;
-    let year = typeof currentYear === "number" ? currentYear : inferYearFromArxivLink(link);
-    if (!year || year < MIN_PUBLICATION_YEAR) {
-      continue;
-    }
-
-    const paragraphs = Array.from(contentCell.querySelectorAll("p"))
-      .map((paragraph) => normalizeText(paragraph.textContent))
-      .filter(Boolean);
-    const abstract = paragraphs.at(-1) || "";
-
-    const classification = classifyPublicationVenue(venueText);
-    const entry = {
-      authors: parseSrijanAuthors(contentCell),
-      abstract,
-      link,
-      links,
-      sourceName,
-      title,
-      venue: formatVenueLabel(venueText, year),
-      venueLabel: classification.label,
-      venueType: classification.type,
-      year,
-    };
-
-    entry.tags = inferTags(entry);
-    entries.push(entry);
-  }
-
-  return entries;
-}
-
-async function fetchProfessorPublications(feed) {
-  const response = await fetch(feed.url);
+  const response = await fetch(LAB_PUBLICATIONS_URL, { cache: "no-cache" });
   if (!response.ok) {
-    throw new Error(`Failed to fetch ${feed.name} publications`);
+    throw new Error(`Failed to fetch ${LAB_PUBLICATIONS_URL} (HTTP ${response.status})`);
   }
 
-  if (feed.type === "yaml") {
-    if (!window.jsyaml) {
-      throw new Error("js-yaml is required to load professor publications");
-    }
-
-    const yamlText = await response.text();
-    const papers = window.jsyaml.load(yamlText);
-    if (!Array.isArray(papers)) {
-      return [];
-    }
-
-    return papers
-      .map((paper) => mapYamlPublication(paper, feed.name, feed.baseUrl))
-      .filter(Boolean);
+  const papers = window.jsyaml.load(await response.text());
+  if (!Array.isArray(papers)) {
+    return [];
   }
 
-  if (feed.type === "html") {
-    const html = await response.text();
-    return parseSrijanPublications(html, feed.name, feed.baseUrl);
-  }
-
-  return [];
+  return papers.map((paper) => mapYamlPublication(paper)).filter(Boolean);
 }
 
-async function fetchDblpPublications() {
-  const xmlDocs = await Promise.all(
-    DBLP_FEEDS.map(async (feed) => {
-      const response = await fetch(feed.url);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch ${feed.name} DBLP feed`);
-      }
+async function loadPublications() {
+  if (!publicationsList || !publicationsStatus) {
+    return;
+  }
 
-      const xml = await response.text();
-      const doc = new DOMParser().parseFromString(xml, "text/xml");
-      return { doc, name: feed.name };
-    }),
-  );
+  publicationsStatus.hidden = false;
+  publicationsStatus.textContent = "Loading publications...";
 
-  return xmlDocs.flatMap(({ doc, name }) =>
-    Array.from(doc.querySelectorAll("r > article, r > inproceedings"))
-      .map((node) => parseRecord(node, name))
-      .filter(Boolean),
-  );
+  try {
+    allPublications = dedupeEntries(await loadLabPublications());
+    syncPapersSelectOptions(allPublications);
+    rerenderPublications();
+
+    if (!allPublications.length) {
+      publicationsStatus.hidden = false;
+      publicationsStatus.textContent =
+        "No publications found. Add entries to publications.yaml.";
+    }
+  } catch (error) {
+    console.warn(error);
+    publicationsStatus.hidden = false;
+    publicationsStatus.textContent =
+      "Could not load publications.yaml in this browser session.";
+  }
 }
+
 
 function classifyVenue(venue) {
   for (const rule of VENUE_RULES.conference) {
@@ -640,43 +396,6 @@ function classifyVenue(venue) {
   return { type: "conference", label: "Other" };
 }
 
-function parseRecord(node, sourceName) {
-  let title = firstText(node, "title");
-
-  if (title.endsWith(".")) {
-    title = title.slice(0, -1);
-  }
-
-  const year = Number.parseInt(firstText(node, "year"), 10);
-
-  let venue = firstText(node, "booktitle") || firstText(node, "journal");
-  if (venue) {
-    venue = venue.replace(/\s*\(\d+\)$/, "");
-  }
-  if (venue && venue.includes("CoRR")) {
-    venue = "arXiv";
-  }
-
-  const classification = classifyVenue(venue);
-
-  if (!title || !year || year < MIN_PUBLICATION_YEAR || !classification) {
-    return null;
-  }
-
-  const entry = {
-    authors: parseAuthors(node),
-    link: recordLink(node),
-    sourceName,
-    title,
-    venue,
-    venueLabel: classification.label,
-    venueType: classification.type,
-    year,
-  };
-
-  entry.tags = inferTags(entry);
-  return entry;
-}
 
 function venueSortRank(entry) {
   const order = {
@@ -797,10 +516,6 @@ function entriesMatch(left, right) {
   }
 
   return titlesMatch(left.title, right.title);
-}
-
-function isPublicationDuplicate(candidate, existingEntries) {
-  return existingEntries.some((entry) => entriesMatch(candidate, entry));
 }
 
 function dedupeEntries(entries) {
@@ -1105,54 +820,6 @@ function rerenderPublications() {
   }
   const paged = applyPagination(ordered);
   renderPublications(groupByYear(paged), yearTotals);
-}
-
-async function loadPublications() {
-  if (!publicationsList || !publicationsStatus) {
-    return;
-  }
-
-  try {
-    const professorResults = await Promise.all(
-      PROFESSOR_PUBLICATION_FEEDS.map((feed) =>
-        fetchProfessorPublications(feed).catch((error) => {
-          console.warn(error);
-          return [];
-        }),
-      ),
-    );
-
-    const professorEntries = dedupeEntries(professorResults.flat());
-    let dblpEntries = [];
-
-    try {
-      dblpEntries = await fetchDblpPublications();
-    } catch (error) {
-      console.warn(error);
-    }
-
-    const manualEntries = MANUAL_PUBLICATION_ENTRIES.filter(
-      (entry) => !isPublicationDuplicate(entry, professorEntries),
-    ).map((entry) => ({
-      ...entry,
-      tags: inferTags(entry),
-    }));
-
-    const filteredDblpEntries = dblpEntries.filter(
-      (entry) => !isPublicationDuplicate(entry, [...professorEntries, ...manualEntries]),
-    );
-
-    allPublications = dedupeEntries([
-      ...professorEntries,
-      ...manualEntries,
-      ...filteredDblpEntries,
-    ]);
-    syncPapersSelectOptions(allPublications);
-    rerenderPublications();
-  } catch (error) {
-    publicationsStatus.textContent =
-      "Could not load publications from the faculty pages in this browser session.";
-  }
 }
 
 if (publicationsSearch) {
