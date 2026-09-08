@@ -12,10 +12,10 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Sora:wght@400;500;600;700;800&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./styles.css?v=6036225" />
 </head>
 
-<body>
+<body class="page-members">
   <div class="page-shell">
     <header class="site-header">
       <a class="brand" href="./index.html#top" aria-label="Charlotte Vision Lab home">
@@ -28,265 +28,193 @@
         </span>
       </a>
       <nav class="site-nav" aria-label="Primary">
-        <!-- <a href="./index.html#news">News</a> -->
         <a href="./members.html">Members</a>
         <a href="./papers.html">Publications</a>
-        <details class="nav-dropdown">
-          <summary>Research</summary>
-          <div class="nav-dropdown-menu" role="menu" aria-label="Research links">
-            <a href="./index.html#research">Directions</a>
-            <a href="./index.html#highlights">Highlights</a>
-          </div>
-        </details>
+        <a href="./index.html#research">Research</a>
       </nav>
     </header>
 
     <main id="top">
-      <section class="section" id="faculty">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Faculty</p>
-            <!-- <h2>Faculty</h2> -->
+      <section class="section members-panel">
+        <div class="members-block" id="faculty">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Faculty</p>
+            </div>
+          </div>
+          <div class="faculty-grid">
+            <article class="faculty-card">
+              <div class="profile-head">
+                <div class="avatar-circle avatar-faculty">
+                  <img src="./images/hieu.png" alt="Hieu Le" />
+                </div>
+                <div>
+                  <p class="feature-kicker">Assistant Professor</p>
+                  <h3>Hieu Le</h3>
+                </div>
+              </div>
+              <p>
+                His research focuses on building controllable and reliable
+                machine vision systems—developing methods to guide models to
+                follow constraints, enhance interpretability, and quantify or
+                reduce uncertainty in predictions.
+              </p>
+              <ul class="focus-topics" aria-label="Research topics">
+                <li>Reliable Vision</li>
+                <li>Generative Modeling</li>
+                <li>3D Shape Reasoning</li>
+                <li>Uncertainty Estimation</li>
+              </ul>
+              <div class="source-links">
+                <a href="https://hieulem.github.io/">Homepage</a>
+              </div>
+            </article>
+
+            <article class="faculty-card">
+              <div class="profile-head">
+                <div class="avatar-circle avatar-faculty">
+                  <img src="./images/srijan.png" alt="Srijan Das" />
+                </div>
+                <div>
+                  <p class="feature-kicker">Assistant Professor</p>
+                  <h3>Srijan Das</h3>
+                </div>
+              </div>
+              <p>
+                His research focuses on video representation learning,
+                utilizing spatio-temporal attention mechanisms, multiple modalities,
+                and both ego-exo centric viewpoints for healthcare applications.
+              </p>
+              <ul class="focus-topics" aria-label="Research topics">
+                <li>Video Foundation Models</li>
+                <li>Robotic Vision</li>
+                <li>Multimodal Learning</li>
+                <li>World Models</li>
+              </ul>
+              <div class="source-links">
+                <a href="https://srijandas07.github.io/">Homepage</a>
+              </div>
+            </article>
           </div>
         </div>
-        <div class="faculty-grid">
-          <article class="faculty-card">
-            <div class="profile-head">
-              <div class="avatar-circle avatar-faculty">
-                <img src="./images/hieu.png" alt="Hieu Le" />
-              </div>
-              <div>
-                <p class="feature-kicker">Assistant Professor</p>
-                <h3>Hieu Le</h3>
-              </div>
-            </div>
-            <p>
-              His research focuses on building controllable and reliable
-              machine vision systems—developing methods to guide models to
-              follow constraints, enhance interpretability, and quantify or
-              reduce uncertainty in predictions.
-            </p>
-            <ul class="inline-list">
-              <li>Reliable Vision</li>
-              <li>Generative Modeling</li>
-              <li>3D Shape Reasoning</li>
-              <li>Uncertainty Estimation</li>
-            </ul>
-            <div class="source-links">
-              <a href="https://hieulem.github.io/">Homepage</a>
-            </div>
-          </article>
 
-          <article class="faculty-card">
-            <div class="profile-head">
-              <div class="avatar-circle avatar-faculty">
-                <img src="./images/srijan.png" alt="Srijan Das" />
-              </div>
-              <div>
-                <p class="feature-kicker">Assistant Professor</p>
-                <h3>Srijan Das</h3>
-              </div>
-            </div>
-            <p>
-              His research focuses on video representation learning,
-              utilizing spatio-temporal attention mechanisms, multiple modalities,
-              and both ego-exo centric viewpoints for healthcare applications.
-            </p>
-            <ul class="inline-list">
-              <li>Video Understanding</li>
-              <li>Robotic Vision</li>
-              <li>Vision-Language Models</li>
-              <li>Action Recognition</li>
-            </ul>
-            <div class="source-links">
-              <a href="https://srijandas07.github.io/">Homepage</a>
-            </div>
-          </article>
-
-        </div>
-      </section>
-      <section class="section" id="associate-faculty">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Associate Faculty</p>
-            <!-- <h2>Faculty</h2> -->
-          </div>
-        </div>
-        <div class="faculty-grid">
-          <article class="faculty-card">
-            <div class="profile-head">
-              <div class="avatar-circle avatar-faculty">
-                <img src="./images/wang1.jpg" alt="Pu Wang" />
-              </div>
-              <div>
-                <p class="feature-kicker">Professor</p>
-                <h3>Pu Wang</h3>
-              </div>
-            </div>
-            <p>
-              His current research focuses on modeling, analysis,
-              and stochastic optimization of networked systems,
-              with applications in Software Defined Networking,
-              Cyber-Physical Systems, Internet of Things, Wireless
-              Sensor Networks, Cognitive Radio Networks,
-              and Electromagnetic Nanonetworks.
-            </p>
-            <ul class="inline-list">
-              <li>Generative AI</li>
-              <li>Computer Vision</li>
-              <li>Computer Networking</li>
-            </ul>
-            <div class="source-links">
-              <a href="https://webpages.charlotte.edu/pwang13/">Homepage</a>
-            </div>
-          </article>
-        </div>
-      </section>
-      <!-- <div class="members-subsection">
-          <div class="section-heading members-subsection-heading">
+        <div class="members-block" id="associate-faculty">
+          <div class="section-heading">
             <div>
               <p class="eyebrow">Associate Faculty</p>
-              <h2>Associate Faculty</h2>
-            </div>
-          </div> -->
-
-      <!-- <div class="faculty-grid">
-              <article class="faculty-card">
-                <div class="profile-head">
-                    <div class="avatar-circle avatar-faculty">
-                        <img src="./images/wang1.jpg" alt="Pu Wang" />
-                    </div>
-                  <div>
-                    <p class="feature-kicker">Associate Faculty</p>
-                    <h3>Pu Wang</h3>
-                  </div>
-                </div>
-                <p>
-                    His current research focuses on modeling, analysis,
-                    and stochastic optimization of networked systems,
-                    with applications in Software Defined Networking,
-                    Cyber-Physical Systems, Internet of Things, Wireless
-                    Sensor Networks, Cognitive Radio Networks,
-                    and Electromagnetic Nanonetworks.
-                </p>
-                <ul class="inline-list">
-                  <li>Generative AI</li>
-                  <li>Computer vision</li>
-                  <li>Computer Networking</li>
-                </ul>
-                <div class="source-links">
-                  <a href="https://srijandas07.github.io/">Homepage</a>
-                </div>
-              </article>
-
-              <article class="faculty-card">
-                <div class="profile-head">
-                    <div class="avatar-circle avatar-faculty">
-                        <img src="./images/stephanie.jpg" alt="Stephanie Schuckers" />
-                    </div>
-                  <div>
-                    <p class="feature-kicker">Associate Faculty</p>
-                    <h3>Stephanie Schuckers</h3>
-                  </div>
-                </div>
-                <p>
-                    Her research focuses on research focuses on processing
-                    and interpreting signals which arise from the human body.
-                    Her work is funded from National Science Foundation,
-                    Department of Homeland Security, and private industry.
-                </p>
-                <ul class="inline-list">
-                  <li>Biometrics/biomedical</li>
-                  <li>Signal and image processing</li>
-                  <li>Machine learning</li>
-                </ul>
-                <div class="source-links">
-                  <a href="https://srijandas07.github.io/">Homepage</a>
-                </div>
-              </article>
             </div>
           </div>
-        </section> -->
-
-      <section class="section" id="students">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Students</p>
-            <!-- <h2>Current Students</h2> -->
+          <div class="faculty-grid">
+            <article class="faculty-card">
+              <div class="profile-head">
+                <div class="avatar-circle avatar-faculty">
+                  <img src="./images/wang1.jpg" alt="Pu Wang" />
+                </div>
+                <div>
+                  <p class="feature-kicker">Professor</p>
+                  <h3>Pu Wang</h3>
+                </div>
+              </div>
+              <p>
+                His current research focuses on modeling, analysis,
+                and stochastic optimization of networked systems,
+                with applications in Software Defined Networking,
+                Cyber-Physical Systems, Internet of Things, Wireless
+                Sensor Networks, Cognitive Radio Networks,
+                and Electromagnetic Nanonetworks.
+              </p>
+              <ul class="focus-topics" aria-label="Research topics">
+                <li>Generative AI</li>
+                <li>Computer Vision</li>
+                <li>Computer Networking</li>
+              </ul>
+              <div class="source-links">
+                <a href="https://webpages.charlotte.edu/pwang13/">Homepage</a>
+              </div>
+            </article>
           </div>
         </div>
-        <div class="students-list">
-          <article>
-            <div class="avatar-circle student-avatar">
-              <img src="./images/dominick.jpeg" alt="Dominick Reilly" />
-            </div>
-            <h3 class="student-name">Dominick Reilly</h3>
-            <p class="student-role">Ph.D. Student</p>
-            <p class="person-tags">VLMs, Video understanding, Robotic control</p>
-            <div class="source-links">
-              <a href="https://dominickrei.github.io/">Homepage</a>
-            </div>
-          </article>
 
-          <article>
-            <div class="avatar-circle student-avatar">
-              <img src="./images/arkaprava.jpg" alt="Arkaprava Sinha" />
+        <div class="members-block" id="students">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Students</p>
             </div>
-            <h3 class="student-name">Arkaprava Sinha</h3>
-            <p class="student-role">Ph.D. Student</p>
-            <p class="person-tags">Temporal Modeling, VLMs, Multimodal Learning</p>
-            <div class="source-links">
-              <a href="https://thearkaprava.github.io/">Homepage</a>
-            </div>
-          </article>
+          </div>
+          <div class="students-list">
+            <article>
+              <div class="avatar-circle student-avatar">
+                <img src="./images/dominick.jpeg" alt="Dominick Reilly" />
+              </div>
+              <h3 class="student-name">Dominick Reilly</h3>
+              <p class="student-role">Ph.D. Student</p>
+              <p class="person-tags">VLMs, Video understanding, Robotic control</p>
+              <div class="source-links">
+                <a href="https://dominickrei.github.io/">Homepage</a>
+              </div>
+            </article>
 
-          <article>
-            <div class="avatar-circle student-avatar">
-              <img src="./images/manish.png" alt="Manish Kumar Govind" />
-            </div>
-            <h3 class="student-name">Manish Kumar Govind</h3>
-            <p class="student-role">Ph.D. Student</p>
-            <p class="person-tags">Robot Learning, Multimodal Learning, Computer Vision</p>
-            <div class="source-links">
-              <a href="https://manishgovind.github.io/">Homepage</a>
-            </div>
-          </article>
+            <article>
+              <div class="avatar-circle student-avatar">
+                <img src="./images/arkaprava.jpg" alt="Arkaprava Sinha" />
+              </div>
+              <h3 class="student-name">Arkaprava Sinha</h3>
+              <p class="student-role">Ph.D. Student</p>
+              <p class="person-tags">Agentic Frameworks, Multimodal VLMs, Temporal Modeling</p>
+              <div class="source-links">
+                <a href="https://thearkaprava.github.io/">Homepage</a>
+              </div>
+            </article>
 
-          <article>
-            <div class="avatar-circle student-avatar">
-              <img src="./images/weston.png" alt="Weston Bondurant" />
-            </div>
-            <h3 class="student-name">Weston Bondurant</h3>
-            <p class="student-role">Ph.D. Student</p>
-            <p class="person-tags">3D-aware generation, Diffusion, Face synthesis</p>
-            <div class="source-links">
-              <a href="https://westonbond.github.io/website/">Homepage</a>
-            </div>
-          </article>
+            <article>
+              <div class="avatar-circle student-avatar">
+                <img src="./images/manish.png" alt="Manish Kumar Govind" />
+              </div>
+              <h3 class="student-name">Manish Kumar Govind</h3>
+              <p class="student-role">Ph.D. Student</p>
+              <p class="person-tags">Robot Learning, Multimodal Learning, Computer Vision</p>
+              <div class="source-links">
+                <a href="https://manishgovind.github.io/">Homepage</a>
+              </div>
+            </article>
 
-          <article>
-            <div class="avatar-circle student-avatar" aria-hidden="true">WC</div>
-            <h3 class="student-name">Wenhao Chi</h3>
-            <p class="student-role">Ph.D. Student</p>
-            <p class="person-tags">Egocentric vision, VLMs, Video understanding</p>
-          </article>
+            <article>
+              <div class="avatar-circle student-avatar">
+                <img src="./images/weston.png" alt="Weston Bondurant" />
+              </div>
+              <h3 class="student-name">Weston Bondurant</h3>
+              <p class="student-role">Ph.D. Student</p>
+              <p class="person-tags">3D-aware generation, Diffusion, Face synthesis</p>
+              <div class="source-links">
+                <a href="https://westonbond.github.io/website/">Homepage</a>
+              </div>
+            </article>
 
-          <article>
-            <div class="avatar-circle student-avatar">
-              <img src="./images/thinh.jpg" alt="Ba-Thinh Lam" />
-            </div>
-            <h3 class="student-name">Ba-Thinh Lam</h3>
-            <p class="student-role">Ph.D. Student</p>
-            <p class="person-tags">Domain Adaptation, Image Generation</p>
-            <div class="source-links">
-              <a href="https://sasukepn1999.github.io">Homepage</a>
-            </div>
-          </article>
+            <article>
+              <div class="avatar-circle student-avatar" aria-hidden="true">WC</div>
+              <h3 class="student-name">Wenhao Chi</h3>
+              <p class="student-role">Ph.D. Student</p>
+              <p class="person-tags">Egocentric vision, VLMs, Video understanding</p>
+            </article>
+
+            <article>
+              <div class="avatar-circle student-avatar">
+                <img src="./images/thinh.jpg" alt="Ba-Thinh Lam" />
+              </div>
+              <h3 class="student-name">Ba-Thinh Lam</h3>
+              <p class="student-role">Ph.D. Student</p>
+              <p class="person-tags">Domain Adaptation, Image Generation</p>
+              <div class="source-links">
+                <a href="https://sasukepn1999.github.io">Homepage</a>
+              </div>
+            </article>
+          </div>
         </div>
+      </section>
     </main>
   </div>
 
-  <script src="./script.js"></script>
+  <script src="./script.js?v=6036223"></script>
 </body>
 
 </html>

@@ -1004,7 +1004,6 @@ function renderPublications(years, yearTotals = {}) {
       `;
     })
     .join("");
-  queueRevealElements(publicationsList);
 }
 
 function syncHeaderState() {
@@ -1018,7 +1017,7 @@ function syncHeaderState() {
 function revealTargets(root = document) {
   return Array.from(
     root.querySelectorAll(
-      ".hero, .section, .metric-card, .hero-panel-head, .hero-figure, .hero-note, .publication-year, .publication-entry, .news-item",
+      ".hero, .metric-card, .hero-panel-head, .hero-figure, .hero-note",
     ),
   );
 }
@@ -1076,8 +1075,10 @@ function initMotion() {
       }
     },
     {
-      rootMargin: "0px 0px -12% 0px",
-      threshold: 0.14,
+      // Tall home sections never reached the old 0.14 threshold while mostly
+      // below the fold, so they stayed opacity: 0. Reveal on first pixel.
+      rootMargin: "0px 0px -4% 0px",
+      threshold: 0,
     },
   );
 
@@ -1391,35 +1392,42 @@ function renderNewsStatus(message) {
   newsList.innerHTML = `<li class="news-item news-status">${escapeHtml(message)}</li>`;
 }
 
+function renderNewsItems(items) {
+  if (!newsList) {
+    return;
+  }
+
+  if (!Array.isArray(items) || items.length === 0) {
+    renderNewsStatus("No news items yet.");
+    return;
+  }
+
+  const sortedItems = [...items].sort((left, right) =>
+    String(right.date).localeCompare(String(left.date)),
+  );
+
+  newsList.innerHTML = sortedItems.map(renderNewsItem).join("");
+}
+
 async function loadNews() {
   if (!newsList) {
     return;
   }
 
-  renderNewsStatus("Loading news...");
-
   try {
-    const response = await fetch("./news.json");
+    const response = await fetch("./news.json", { cache: "no-cache" });
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
 
     const items = await response.json();
-
-    if (!Array.isArray(items) || items.length === 0) {
-      renderNewsStatus("No news items yet.");
-      return;
-    }
-
-    const sortedItems = [...items].sort((left, right) =>
-      String(right.date).localeCompare(String(left.date)),
-    );
-
-    newsList.innerHTML = sortedItems.map(renderNewsItem).join("");
-    queueRevealElements(newsList);
+    renderNewsItems(items);
   } catch (error) {
-    renderNewsStatus("News is temporarily unavailable.");
+    // Keep any static markup already in the page when the feed cannot load.
+    if (newsList.children.length === 0) {
+      renderNewsStatus("News is temporarily unavailable.");
+    }
   }
 }
 
